@@ -16,7 +16,7 @@ var tunings = [["Renaissance (G)", ren_G],
   ["Baroque D minor", bar_d],
   ["Bandora", bandora]];
 var ticksPerCrotchet = 128;
-var rhythmFlags = "ZYTSEQHWBF";
+var rhythmFlags = "ZYTSEQHWFB";
 var buttonRhythmFlags = "ZYTSEQHF";
 var tsbasics = [[1], [2], [3], [4], [5], [6], [8], [12],
   ["C"], ["C/", "Ç"], ["D", "C", "reverse"], ["D/", "d"],
@@ -31,17 +31,38 @@ var barCount = 0;
 var nextpage = false;
 var prevpage = false;
 var rule = false;
-var fill = true;
+// var fill = true;
+var fill = false;
 var test = true;//false;
 var curx = 0;
 var cury = 0;
+
+// Pagination/justification stuff. Very simple!!:
+// var A4width = 2480; // @ 300 dpi
+// var A4height = 3508; // @ 300 dpi
+var A4width = 1112; 
+var A4height = 1573; 
 var leftMargin = 24;
+var rightMargin = leftMargin; // i.e. width of the margin, not position
+var systemEnd = A4width - rightMargin; // position of end of system = 1088
+var systemWidth = systemEnd - leftMargin; // = 1064
 //var topMargin = 20;
 //var topMargin = 40;
 var topMargin = 60;
+var TITLEHEIGHT = 150; // the default text box for titles
+var currSysEnd;
+var systemEnds = [];
+var justify = false;
+var MINSYMFORJUST = 20; // minimum number of drawn symbols on a system for justification
+// var justFactors = []; // Amount each system needs stretching for justification
+// var justFactor = 1; // current factor
+
+not_printing = true; // Draw empty boxes for insertion - if false, don't!
+
 var ld = 15; // staff-line-distance;
 var lines = 6;
-var editable = true;
+// var editable = true;
+var editable = false;
 var mainCourseCount = 6;
 var TabCodeDocument = false;
 var Extract;
@@ -57,7 +78,7 @@ var curTabType;
 var curFontName;
 var curApparatus = false; //=>collation editor?
 var curTuning = ren_G;
-var tempoFactor = 1.0;  // 256 ticks per second
+var tempoFactor = 1.0;  // 256 ticks per second - i.e. 120 bpm
 var breaks = "stop"; // options are: TRUE (observe breaks), FALSE (ignore them), "stop" (up
                      // to first break)
 var breakTypes = {Piece: "{/}", System: "{^}", Page: "{>}"};
@@ -69,6 +90,10 @@ var sel_window_scroll = 0;
 var activeDialog = false;
 var sel_note = false; //currently-selected note  
 
+// TC 30 Sep 2026:
+// so we can set this from a click in the score to implement "Play from click"
+// This needs to be global
+var start_wordi; 
 
 function tabxmlp(comment){
   return /^{<\/?(app|rdg)[^>]*>/i.test(comment[0]);

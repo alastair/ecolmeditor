@@ -37,14 +37,19 @@ function updatePage() {
     if (document.getElementById("assignmentbar")) document.getElementById("assignmentbar").style.width = w;
     if (prevdiv) prevdiv.style.marginLeft = w - parseInt(prevdiv.style.width);
   }
-  document.getElementById("rendered").style.width = basicwidth();
+//   document.getElementById("rendered").style.width = basicwidth();
 
   //  TabCodeDocument.makeMidi();
 
   if (editable) {
     $(".editable .flag.rhythm").click(function(e) {
+      var word = $(this).data("word");
+      sel_note = word;
+      start_wordi = sel_note.n;
+      logger.log("Chord " + start_wordi + " selected")
       activeDialog = rhythmFlagSelector(e.pageX, (e.pageY), $(this).data("word"));
       getKeys(activeDialog);
+      activeDialog.style.top = 600;
       return false;
     });
     $("#contextflag").click(function(e) {
@@ -56,6 +61,8 @@ function updatePage() {
       doubleclick = true;
       var word = $(this).data("word");
       sel_note = word;
+      start_wordi = sel_note.chord.n;
+      logger.log("Chord " + start_wordi + " selected")
       activeDialog = frenchTabSelector(e.pageX, (e.pageY), word);
       getKeys(activeDialog);
     });
@@ -65,6 +72,10 @@ function updatePage() {
       doubleclick = true;
       var word = $(this).data("word");
       sel_note = word;
+      var word = $(this).data("word");
+      sel_note = word;
+      start_wordi = sel_note.chord.n;
+      logger.log("Chord " + start_wordi + " selected")
       activeDialog = italianTabSelector(e.pageX, (e.pageY), word);
       getKeys(activeDialog);
     });
@@ -74,6 +85,10 @@ function updatePage() {
       var ourlist = this.querySelectorAll(".French")
       if(ourlist.length) {
       	logger.log ("\tstarts: "+ourlist.starts+" ends: "+ourlist.ends)
+      var word = $(this).data("word");
+      sel_note = word;
+      start_wordi = sel_note.chord.n;
+      logger.log("Chord " + start_wordi + " selected")
 		 activeDialog = frenchTabSelector(e.pageX, (e.pageY), word);
       }
       else activeDialog = italianTabSelector(e.pageX, (e.pageY), word);
@@ -102,7 +117,9 @@ function updatePage() {
     });
     $(".barline").click(function(e) {
       var word = $(this).data("word");
-      buttonBox(barlineButtonSet(0, 0, $(this).data("word")),
+      logger.log("Barline " + word.barnumber + " selected")
+      start_wordi = nextChord(word).n;
+     buttonBox(barlineButtonSet(0, 0, $(this).data("word")),
         e.pageX, (e.pageY), [deleteButton(0, 0, word.starts, word.finishes, "barline")]);
  getKeys(); // ??
 
@@ -180,6 +197,14 @@ document.getElementById("editor_container").scrollTop = oldTop;
 
 }
 
+// Find first chord after a selected barline
+function nextChord(barline) {
+	var thing = barline.next;
+	while (thing.tType != "Chord") thing = thing.next;
+	if(thing) return thing;
+	else return false;
+}
+
 /****** Helper functions for dealing with clicks on editor pane 
         suggested by DL 27Apr2021] *******/
 /* See Tablature () in parser.js:
@@ -228,6 +253,7 @@ function getPreviousChord(x, tabWords, systemStart, systemEnd){
  		continue;
  	}
  	else {
+
  // click is on or after current chord, so return it
  		return tabWords[q];
  	}

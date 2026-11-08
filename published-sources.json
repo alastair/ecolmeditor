@@ -1,0 +1,322 @@
+{
+  "test/new_index.html": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/test/new_index.html",
+    "sha256": "6cc06591faf56d8ea5cf402f66acb13c9a13641162d8a84a9e63381cf9906f02",
+    "bytes": 30067
+  },
+  "sft/G_lute/acoustic_grand_piano-ogg.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/sft/G_lute/acoustic_grand_piano-ogg.js",
+    "sha256": "7a4e99ae08f2ec908ea9bca7ce163de69649d008208487e171795fc8aa5adbac",
+    "bytes": 2710630
+  },
+  "sft/E_lute/acoustic_grand_piano-ogg.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/sft/E_lute/acoustic_grand_piano-ogg.js",
+    "sha256": "1ca22a57441c96aac7fe89a8a991a9781b880c8144d06ffadfc415ece1766cb1",
+    "bytes": 2748990
+  },
+  "sft/Bar_lute/acoustic_grand_piano-ogg.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/sft/Bar_lute/acoustic_grand_piano-ogg.js",
+    "sha256": "d3be9bb5fb8cd234ae367b175c71296a36c98d1a9822fdf68435b2b7a146118c",
+    "bytes": 2707986
+  },
+  "ecolm.ico": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/ecolm.ico",
+    "sha256": "dd3b28f6b9c460770c770c6ed1294f41b9b48d975b249ec1b97e8ab652b01f8a",
+    "bytes": 5558
+  },
+  "newlook.css": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/newlook.css",
+    "sha256": "aecc4dc00f3be7d4b6454532e1e5466e44e637e0f317405f219b29579657f100",
+    "bytes": 8351
+  },
+  "render.css": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/render.css",
+    "sha256": "eda5cad9c680a722761a9d3c1cf0e4b60c7da56982e113f5c5637cd074ede88f",
+    "bytes": 7064
+  },
+  "print.css": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/print.css",
+    "sha256": "c28a53fb3bbf5a7aae2435bebf7e73bac786a00809b1ae584e5150b5be95b30e",
+    "bytes": 382
+  },
+  "features.css": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/features.css",
+    "sha256": "775884348d45622df9b7b6aadc98ddd137fd06c5a5ed1d1f289ecf3b702046b1",
+    "bytes": 981
+  },
+  "test/three_pane.css": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/test/three_pane.css",
+    "sha256": "9ffeb786c804c13a49ba1ae6897e2f1cf958772408b339e562258a6dff2ee130",
+    "bytes": 1946
+  },
+  "jquery-1.4.4.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/jquery-1.4.4.js",
+    "sha256": "b31cd094af7950b3a461dc78161fd2faf01faa9d0ed8c1c072790f83ab26d482",
+    "bytes": 183184
+  },
+  "jquery.scrollTo-1.4.2-min.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/jquery.scrollTo-1.4.2-min.js",
+    "sha256": "1cd02bdd539cb152085e4e1583428bcb06c8128a9ec912195f8a42ed8179804f",
+    "bytes": 2262
+  },
+  "soundfont-player.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/soundfont-player.js",
+    "sha256": "28a85831f3b69aceeee09561ced8a165e74b28088c24d282e63fa80ab89b01c2",
+    "bytes": 9044
+  },
+  "dom.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/dom.js",
+    "sha256": "b1a0d3f1ca39a2be2eed3cda91073673e817c0022f5821653bdd0d753de8840a",
+    "bytes": 8889
+  },
+  "formatdate.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/formatdate.js",
+    "sha256": "d0723b029d573c5fd2369ffb3a0ec2bd86e28d62a97b192c7b1cc0f0bd29caaa",
+    "bytes": 1123
+  },
+  "user.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/user.js",
+    "sha256": "58e4c31a4da56576f644d367b70ea84c26af6184a9b0738b088400fae7dcfe60",
+    "bytes": 22280
+  },
+  "php.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/php.js",
+    "sha256": "d0a52e02c5436b23d9b070cc7dfa029b4477292b52ac0ceb5636675c288d2cf1",
+    "bytes": 14692
+  },
+  "diff.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/diff.js",
+    "sha256": "38179724b8f1b582f1fc4ccef078ac2c5264efc794c811fc8f9c5a92fb9f0914",
+    "bytes": 4413
+  },
+  "corebuttons.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/corebuttons.js",
+    "sha256": "959b45954ab135a781f01e23714cc82f207bf48ae58f0f47ae181284bd95afaa",
+    "bytes": 2838
+  },
+  "buttons.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/buttons.js",
+    "sha256": "19303f17250168d4126d9e09b213acb7a6cdad34a3b26df4e096bc1587612374",
+    "bytes": 41487
+  },
+  "base.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/base.js",
+    "sha256": "081d4614145ef5da22f8bacf7750605516e9d6211080b3fd749e49d5d1afab1a",
+    "bytes": 4220
+  },
+  "basic-drawing.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/basic-drawing.js",
+    "sha256": "3f87f80f9ef79571ea93a9229b90e9d6f6c73364c2588e3084004b2efdef6b46",
+    "bytes": 8480
+  },
+  "ornaments.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/ornaments.js",
+    "sha256": "6f19f15b2d1d84dde88f575f7e75f846302938399607a3c39e6c92afbad5353f",
+    "bytes": 37482
+  },
+  "tabclasses.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/tabclasses.js",
+    "sha256": "b6968e904cb8d3d2ef9e1fd01afd3e4c42e00c681473a054dc751ff123077e90",
+    "bytes": 35292
+  },
+  "parser.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/parser.js",
+    "sha256": "6dbf2a3b07916ab03af824d10e185dae0fa8d80745b7b2da510c887437114da3",
+    "bytes": 33940
+  },
+  "ornament-buttons.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/ornament-buttons.js",
+    "sha256": "367569a8f2386b8e03249d7a6b133d78106f2b5ddc0961d9c2019b78fd0c19bf",
+    "bytes": 3914
+  },
+  "rules.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/rules.js",
+    "sha256": "6af2cbd2b125a16665c18592bf813f9f5827c20f8e93aa09c943805f7e79ee35",
+    "bytes": 8050
+  },
+  "midi_mod_TC.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/midi_mod_TC.js",
+    "sha256": "8ef209a436edba94dc08e86876e4f2dcb4e76dafe16e6c21c3160062dd018772",
+    "bytes": 18030
+  },
+  "editor.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/editor.js",
+    "sha256": "f063998e3649d789c553fd362cde0f8816646299a7c920257286f5b4ba639e58",
+    "bytes": 24123
+  },
+  "siamese/siamese.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/siamese/siamese.js",
+    "sha256": "17700f08d5e7a68ec4b9f77b9665c45f83d27ef33b7fda3d3b52228a573add53",
+    "bytes": 9044
+  },
+  "test/test.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/test/test.js",
+    "sha256": "e55243d314438c54e09d69886550140eacb054ab4e4d66218c02b0a65b110c97",
+    "bytes": 4990
+  },
+  "test/user.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/test/user.js",
+    "sha256": "1e62387bc1ba97f71dd3454ba8d150b5659c49aafc5f3269be88e02cc4871a99",
+    "bytes": 996
+  },
+  "test/distance.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/test/distance.js",
+    "sha256": "66ba06eda9436c01f8e1b8422396a2ae7eca53c711b79da8ea457e0a8f190aa8",
+    "bytes": 4404
+  },
+  "pianoroll-ajax.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/pianoroll-ajax.js",
+    "sha256": "00d19a80f8f4fd7b6bde08a626fa2e94c6b0577cf4871aa418778f1d159e9801",
+    "bytes": 2021
+  },
+  "pianoroll.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/pianoroll.js",
+    "sha256": "e49b96d38f7f9d6fc11f7557804b8e6ddffe19fc1def8389682d053a59c8c7d1",
+    "bytes": 25676
+  },
+  "imgpreview.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/imgpreview.js",
+    "sha256": "f64a1b67b2e8cc3a3513ced05bf407a20e1751d2e67c2610ffad18a4336ec9dc",
+    "bytes": 3061
+  },
+  "test/importMIDI.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/test/importMIDI.js",
+    "sha256": "ea14dbbac916d7ec58a58c7f45a85407ad3d933ec84e55113ccb39d51658ec10",
+    "bytes": 13384
+  },
+  "test/Midi.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/test/Midi.js",
+    "sha256": "73f08ea5e6f46601366a0b0c193241b64e5512eb82ced4d5b61b6560980e0cec",
+    "bytes": 76587
+  },
+  "test/simple-slider.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/test/simple-slider.js",
+    "sha256": "11980d20093e3f810a2fce11130eed4409ec135378275c000ad664d08d5e7eac",
+    "bytes": 11604
+  },
+  "features.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/features.js",
+    "sha256": "4a8e0722f233376ec6a42bba0b0526bf072c489d5fb3cc4a75eed86d0aaead86",
+    "bytes": 19859
+  },
+  "test/svg-export.js": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/test/svg-export.js",
+    "sha256": "61eb94965df0c0b7c7c24d0ae6cb9b3c30d93be439a7d6170d13ba2e750fd3f5",
+    "bytes": 20633
+  },
+  "full_ECOLM_logo.gif": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/full_ECOLM_logo.gif",
+    "sha256": "494b2169ced8e9afdac046a8f40fe06c70d648bae94ec6c9c13bd574c4e4ab95",
+    "bytes": 16633
+  },
+  "test/flag_Q.jpg": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/test/flag_Q.jpg",
+    "sha256": "6c9976b598d16d008f6b3fa80168d96a409e57035cdfaae0c8508e619a401bf7",
+    "bytes": 3391
+  },
+  "varietie4-webfont.eot": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/varietie4-webfont.eot",
+    "sha256": "2f65641124e9f62ae71004771422097ffe7966f62de042fd47c3b007c74ca974",
+    "bytes": 25788
+  },
+  "varietie4-webfont.woff": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/varietie4-webfont.woff",
+    "sha256": "cd3161b0ff26eb7f5412992113d935aa84d1dc59fcd7aa415466bc822bfba0cb",
+    "bytes": 17292
+  },
+  "varietie4-webfont.ttf": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/varietie4-webfont.ttf",
+    "sha256": "041569691f9c5169b96d5c464242717a84e3c46bef216afc15ede626c5f8bac8",
+    "bytes": 25592
+  },
+  "varietie4-webfont.svg": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/varietie4-webfont.svg",
+    "sha256": "43793cde5d88c550c7616df4e6c858969c6cf627cef662470a56278b215b80e4",
+    "bytes": 47883
+  },
+  "tabfont-webfont.woff": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/tabfont-webfont.woff",
+    "sha256": "e9d9ddd9a10371df3ec77c5d9781b4eed7a4eab07e3057175cf36958aa82528a",
+    "bytes": 16236
+  },
+  "tabfont-webfont.ttf": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/tabfont-webfont.ttf",
+    "sha256": "22bedf6fcc78a9f27bf2d5b26318b8fee7a3c58db1d672066cc81ab878ad9918",
+    "bytes": 22772
+  },
+  "tabfont-webfont.svg": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/tabfont-webfont.svg",
+    "sha256": "f36fbd558d2b34f0be1b2ae040e6334a03a5cf0d8f8ffbbcddddab828c57622c",
+    "bytes": 45799
+  },
+  "varietie3-webfont.eot": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/varietie3-webfont.eot",
+    "sha256": "2af0744b83aafe6b34c290729b49b022bb9373cce9459dbd8cab3263cdb1a1cf",
+    "bytes": 4463
+  },
+  "varietie3-webfont.woff": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/varietie3-webfont.woff",
+    "sha256": "f8994ad711890ebe1faccc0dfa49e51825a32ba4e06ab3dab50def8c9c9d39f4",
+    "bytes": 4824
+  },
+  "varietie3-webfont.ttf": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/varietie3-webfont.ttf",
+    "sha256": "9f40a1c04ae4e46dcb306b3104ca3bb2397007919e83dcaad948300c935a9815",
+    "bytes": 6988
+  },
+  "varietie3-webfont.svg": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/varietie3-webfont.svg",
+    "sha256": "c0aa87266c72c0f2315fe71ac502b7aa8e88bec5cb97154b0283e9e64f2ae84f",
+    "bytes": 6841
+  },
+  "varietie-frets-orns-webfont.eot": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/varietie-frets-orns-webfont.eot",
+    "sha256": "6b614dca1f89e83e05015ce936acb6619e2b6ded58b5a150f4287d3eaa67e60d",
+    "bytes": 8354
+  },
+  "varietie-frets-orns-webfont.woff": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/varietie-frets-orns-webfont.woff",
+    "sha256": "0ff9c5fee9c7d9e91df6f3b92b8e73aa459c1ffa4841b3680d11801d120613d8",
+    "bytes": 9208
+  },
+  "varietie-frets-orns-webfont.ttf": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/varietie-frets-orns-webfont.ttf",
+    "sha256": "e53c2a8367ce61b9556ce9dec4058216fd26ea512238b2fa51536a7433d3d3cb",
+    "bytes": 13160
+  },
+  "varietie-frets-orns-webfont.svg": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/varietie-frets-orns-webfont.svg",
+    "sha256": "efb01252aa5a927182d3112d342eb5fc7eac1a5c37f87fba9684db55188b1e9a",
+    "bytes": 14914
+  },
+  "varietie-ts-webfont.eot": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/varietie-ts-webfont.eot",
+    "sha256": "129798f3356e3854ee08c8393804befbe7538b5bdbf64626accb4437a8fe003b",
+    "bytes": 2748
+  },
+  "varietie-ts-webfont.woff": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/varietie-ts-webfont.woff",
+    "sha256": "ef376a375c4e0fe327083e449e42691771ff42ed4e50eb8c1decd8a0cb99b49c",
+    "bytes": 3076
+  },
+  "varietie-ts-webfont.ttf": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/varietie-ts-webfont.ttf",
+    "sha256": "f3b9ac56dd3c3506ea068fbd5bc2cba481222da1644677c422d00a1118d28aae",
+    "bytes": 4188
+  },
+  "Player_stop.png": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/Player_stop.png",
+    "sha256": "61bbf156a8ba99828670f39736513e821b0a0d31886e66b7a6d25c00a1b6b275",
+    "bytes": 796
+  },
+  "Player_play.png": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/Player_play.png",
+    "sha256": "99f23c24a556c7e7cf0794bd100400941eb75e342942f2487fc9ef36ab30ad3f",
+    "bytes": 2558
+  },
+  "pdf_fonts/tabfontwebfont.ttf": {
+    "url": "https://doc.gold.ac.uk/~mas01tc/ecolmeditor_Apr2025/ecolmeditor/pdf_fonts/tabfontwebfont.ttf",
+    "sha256": "22bedf6fcc78a9f27bf2d5b26318b8fee7a3c58db1d672066cc81ab878ad9918",
+    "bytes": 22772
+  }
+}

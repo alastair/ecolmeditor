@@ -157,13 +157,14 @@ function svgCSS(element, css){
   element.appendChild(link);
   return element;
 }
-function svgText(svgEl, x, y, cname, id, style, content){
+function svgText(svgEl, x, y, cname, id, style, content, invert){
   var el = document.createElementNS(SVGNS, "text");
   if(cname) el.setAttributeNS(null, "class", cname);
   if(id) el.id = id;
   if(x) el.setAttributeNS(null, "x", x);
   if(y) el.setAttributeNS(null, "y", y);
   if(style) el.setAttributeNS(null, "style", style);
+  if(invert) el.setAttributeNS(null, "rotate",180);
   if(content == 0 || content) el.appendChild(document.createTextNode(content));
   if(svgEl) svgEl.appendChild(el);
   return el;
@@ -188,9 +189,9 @@ function svgLine(svgEl, x1, y1, x2, y2, cname, id){
   var el = document.createElementNS(SVGNS, "line");
   if(cname) el.setAttributeNS(null, "class", cname);
   if(id) el.setAttributeNS(null, "id", id);
-  el.setAttributeNS(null, "x1", x1);
+  el.setAttributeNS(null, "x1", parseFloat(x1));
   el.setAttributeNS(null, "y1", y1);
-  el.setAttributeNS(null, "x2", x2);
+  el.setAttributeNS(null, "x2", parseFloat(x2));
   el.setAttributeNS(null, "y2", y2);
   if(svgEl) svgEl.appendChild(el);
   return el;

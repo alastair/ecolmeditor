@@ -83,6 +83,7 @@ function buttonBox(buttons, x, y, extras){
   cell.appendChild(cancelButton());
 //  box.style.top = Math.min(y, window.innerHeight - box.offsetHeight) + window.innerHeight + window.pageXOffset;
 // TC 31 Jan 21
+	box.style.top = "600px";
 //   box.style.top = $(window).scrollTop() + $(window).height() - 250;
 //   box.style.left = Math.max(0, x - (box.offsetWidth/2));
   return box;

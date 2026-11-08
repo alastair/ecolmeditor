@@ -36,7 +36,7 @@ function courseChange(note, course, delta, up) {
                                clearButtons();
                              };
                            }(note.starts+1, course, document.getElementById('code'), delta),
-                          (up ? "upcourse.png" : "downCourse.png"), false);
+                          (up ? "upcourse.png" : "downcourse.png"), false);
   // button.style.top = y;
   // button.style.left = x;
 //  button.style.position = "fixed";

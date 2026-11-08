@@ -50,7 +50,9 @@ function drawDashedBarline(svg, x){
 }
 
 function drawBarline(svg, x, dashed, dble){
-  if(dashed){
+ if(justify && !nowjustify) x = 1; // if justify, initial barline at left end of staff
+ 
+ if(dashed){
     drawDashedBarline(svg, x);
     curx -= ld/5;
   } else {
@@ -64,22 +66,49 @@ function drawBarline(svg, x, dashed, dble){
   else {
     curx += ld/3;
   }
+// logger.log("Barline at "+curx)
 }
 /*
 }
   curx += ld;
 }
 */
-
+// 
+// // put the xpos of last object to be drawn on each system into global systemEnds array
+// // - needed for justification
+// function getSystemEnds() {
+// 	var TCD = TabCodeDocument;
+// 	var systemnumber = 0;
+// 	for(var i=0; i<TCD.TabWords.length; i++){
+// 		dur = 0;
+// 		switch(TCD.TabWords[i].tType){
+// 			case "SystemBreak":
+// 			case "PageBreak":
+// 				currSysEnd = TCD.TabWords[i-1].xpos;
+// 				systemEnds[systemnumber]=currSysEnd;
+// 				systemnumber++;
+// 				break;
+// 			case "Chord":
+// 			case "Barline":
+// 				currSysEnd = TCD.TabWords[i].xpos;
+// 				systemEnds[systemnumber]=currSysEnd;
+// 				systemnumber++;
+// 				break;
+// 
+//     	}
+// 	}
+// 	logger.log(systemEnds);
+// 	return systemEnds;
+// }
+// 
 function drawSystemBreak(obj,i) {
-
-//	svgText(svg, x+20, y+5, "systemBreak", false, false, "&#U+23CE");
-//      var el = svgRect(TabCodeDocument.SVG, x, y, 20, 20, "systemBreak", "sys_"+number.toString());
-//         var el = svgRect(TabCodeDocument.SVG, 0, obj.systemOffsets[obj.systemnumber], 20, 20, "systemBreak", "sys_"+obj.systemnumber.toString());
-        var el = svgWhiteRect(TabCodeDocument.SVG, curx+0, cury+40, 20, 20, "systemBreakBox", "sys_"+obj.systemnumber.toString());
-        $(el).data("word", obj.tokens[i]);
-        var label = svgText(TabCodeDocument.SVG, curx+6, cury+56, "systemBreakBox", false, false, "^");
-        $(label).data("word", obj.tokens[i]); 
+	if(!not_printing) return false;
+	var el = svgWhiteRect(TabCodeDocument.SVG, systemEnd+4, cury+40, 20, 20, "systemBreakBox", "sys_"+obj.systemnumber.toString());
+	$(el).data("word", obj.tokens[i]);
+	var label = svgText(TabCodeDocument.SVG, systemEnd+10, cury+56, "systemBreakBox", false, false, "^");
+	$(label).data("word", obj.tokens[i]); 
+	
+// logger.log("System break at "+curx+"\n")
 }
 
 function drawTSC(svg, TS, i, j){
@@ -107,8 +136,10 @@ function drawTSC(svg, TS, i, j){
     default:
       // Not a symbol sig (most likely a number)
       // FIXME: If it's not a number, then this won't work
-      svgText(el, curx+(ld/4), cury+ystep, compClass+" tsc tstext", false, false,
+      if (!isNaN(symbol.toString())) {
+		  svgText(el, curx+(ld/4), cury+ystep, compClass+" tsc tstext", false, false,
         (/[\/\.]/.test(symbol) ? symbol.substring(0,symbol.search(/[\/\.]/)) : symbol));
+        }
   }
   if(slashed){
     // If were here, it has a slash that we don't have a glyph for
@@ -189,8 +220,11 @@ function drawTSComponent(svg, symbol, minStep, i, j, TS){
 
 function drawSlashes(svgEl, n) {
   var starty = cury+systemStep()-(ld*3/4);
+//   var leftstart = curx - 4;
+  var leftstart = curx - 5;
   for(var i=0; i<n; i++){
-    svgLine(svgEl, curx, starty, curx+ld, starty-(ld/2), "bassslash", false);
+//     svgLine(svgEl, curx, starty, curx+ld, starty-(ld/2), "bassslash", false);
+    svgLine(svgEl, leftstart, starty, leftstart+ld, starty-(ld/2), "bassslash", false);
     starty += 3;
   }
 }
@@ -213,27 +247,33 @@ function drawInsertBox(x, y, i, svgEl){
       continue;
     }
     voff = j ? ld * (j-1/4) : -ld;
+    if(not_printing) {
     // thinned this to avoid blocking barlines
-    el = svgRoundedRect(svgEl, x-(3/4*ld), y+voff, 8/16*ld, j ? ld : 7/4* ld, ld/4, ld/4, "missingChord", "n"+i+"p"+j);
-    $(el).data("follows", i);
-    $(el).data("precedes", i+1);
-    $(el).data("pos", j);
+		el = svgRoundedRect(svgEl, x-(3/4*ld), y+voff, 8/16*ld, j ? ld : 7/4* ld, ld/4, ld/4, "missingChord", "n"+i+"p"+j);
+		$(el).data("follows", i);
+		$(el).data("precedes", i+1);
+		$(el).data("pos", j);
+    }
   }
 }
 
 function drawMetricalInsertBoxes(i, word, svgEl){
-  var ela = svgRoundedRect(svgEl, curx-ld, cury+3/2*ld, ld*2, ld, 
-    ld/4, ld/4, "missingTSC above", false);
-  var elb = svgRoundedRect(svgEl, curx-ld, cury+11/2*ld, ld*2, ld,  
-    ld/4, ld/4, "missingTSC below", false);
-  $(ela).data("word", word);
-  $(elb).data("word", word);
-  $(ela).data("i", i);
-  $(elb).data("i", i);
+  if(not_printing) {
+	  var ela = svgRoundedRect(svgEl, curx-ld, cury+3/2*ld, ld*2, ld, 
+		ld/4, ld/4, "missingTSC above", false);
+	  var elb = svgRoundedRect(svgEl, curx-ld, cury+11/2*ld, ld*2, ld,  
+		ld/4, ld/4, "missingTSC below", false);
+	  $(ela).data("word", word);
+	  $(elb).data("word", word);
+	  $(ela).data("i", i);
+	  $(elb).data("i", i);
+  }
 }
 function drawMetricalInsertBox(i, type, word, svgEl){
-  var el = svgRoundedRect(svgEl, curx-ld/2, cury+2*ld, ld/2, 4*ld,
-    ld/4, ld/4, "missingTSC "+type, false);
-  $(el).data("word", word);
-  $(el).data("i", i);
+  if(not_printing) {
+	  var el = svgRoundedRect(svgEl, curx-ld/2, cury+2*ld, ld/2, 4*ld,
+		ld/4, ld/4, "missingTSC "+type, false);
+	  $(el).data("word", word);
+	  $(el).data("i", i);
+  }
 }

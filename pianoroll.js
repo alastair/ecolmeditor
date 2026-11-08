@@ -5,6 +5,124 @@ var playing = false;
 var thesoundfont = false;
 var leadTime = 1;
 
+//  PLAYBACK FUNCTIONS
+
+function jsPlay(start, end, starti){
+  if(ctx && ctx.close) {
+    ctx.close();
+    ctx = false;
+  }
+  ctx = new AudioContext();
+  soundfont = new Soundfont(ctx);
+  // instrument = soundfont.instrument('acoustic_guitar_nylon');
+  thesoundfont = getSoundfont(TabCodeDocument);
+  instrument = soundfont.instrument(thesoundfont+'/acoustic_grand_piano');
+  curTuning = curParams.contextTuning;
+  var words = TabCodeDocument.TabWords;
+  var now = leadTime;
+  var started = false;
+  starti = starti || 0;
+  instrument.onready(function(){
+    playing=new Playing();
+    playing.doc = TabCodeDocument;
+    playing.words = words;
+    playing.now = new Date().getTime();
+    $(".playing").each(function(){
+        this.classList.remove('playing');
+    });
+    for(var i=starti; i<words.length; i++){
+      if(start && !started && start!==words[i]) continue;
+      started = true;
+      if(words[i].tType==="Chord"){
+        if(!playing.wordi && playing.wordi!==0) playing.wordi = i;
+        now = bufferChord(words[i], now, instrument, i, words);
+      }
+      if(end && end===words[i]) break;
+    }
+    TabCodeDocument.duration = (now-leadTime)*64;
+    $(".playback.control").toggleClass("start", false);
+    $(".playback.control").toggleClass("stop", true);  
+    playingTimeout = setTimeout(switchControls, (now+leadTime)*1000);
+  });
+}
+function jsStop(){
+  if(ctx) ctx.close();
+  $(".playback.control").toggleClass("start", true);
+  $(".playback.control").toggleClass("stop", false);
+  if(playingTimeout){
+    window.clearTimeout(playingTimeout);
+    playingTimeout = false;    
+  }
+  if(playing && playing.timeout){
+    window.clearTimeout(playing.timeout);
+    playing.timeout = false;
+  }
+  ctx = false;
+}
+function switchControls(){
+  $(".playback.control").toggleClass("start", true);
+  $(".playback.control").toggleClass("stop", false);
+  jsStop();
+}
+
+function playSelection(){
+  var word = $(this).data("word");
+  word.selections[0].play();
+}
+function playDoc(doc){
+  var otcd = TabCodeDocument;
+  TabCodeDocument = doc;
+  jsPlay();
+  TabCodeDocument = otcd;  
+}
+
+// TC 1 Oct 2026:
+function playFrom(chordNum) {
+	jsPlay(false,false,TCindexFromChord(chordNum));
+}
+function TCindexFromChord(n) {
+	var TCD = TabCodeDocument;
+// 	logger.log(TCD.TabWords.length + " TabWords")
+	for(var i=0;i<TCD.TabWords.length;i++) {
+		if((TCD.TabWords[i].tType == "Chord")&&(TCD.TabWords[i].n==n)) return i;
+	}
+	return 0;
+}
+
+function playOrStop(){
+  if(isPlaying()){
+    jsStop();
+  } else {
+    playDoc($(this).data("doc"));
+  }
+}
+var playingTimeout = false;
+function isPlaying(){
+  return playingTimeout;
+}
+function playOrResume(){
+  if(playing && playing.wordi<playing.doc.TabWords.length){
+    playing.resume();
+  } else {
+    jsPlay();
+  }
+}
+function stopOrPause(){
+// TC 30 Sep 2026: save playing.wordi as ?(global) last_played_wordi
+// so we can play from here 
+// (which might be computed from a click in the tab or tabcode)
+		start_wordi = playing.wordi;
+		
+  if(playing && playing.timeout){
+    playing.pause();
+  } else if(playing && playing.wordi){
+    TabCodeDocument.TabWords[playing.wordi].DOMObj.classList.remove('playing');
+
+    playing.wordi = 0;
+  } else {
+    jsStop();
+  }
+}
 function resumePlaying(){
 //  jsPlay(false, false, this.wordi+1); // FIXME: add some time
   jsPlay(false, false, playing.wordi+1);
@@ -170,64 +288,131 @@ var ctx = false;
 var soundfont = false;
 var instrument = false;
 var AudioContext = window.AudioContext || window.webkitAudioContext;
-function jsPlay(start, end, starti){
-  if(ctx && ctx.close) {
-    ctx.close();
-    ctx = false;
-  }
-  ctx = new AudioContext();
-  soundfont = new Soundfont(ctx);
-  // instrument = soundfont.instrument('acoustic_guitar_nylon');
-  thesoundfont = getSoundfont(TabCodeDocument);
-  instrument = soundfont.instrument(thesoundfont+'/acoustic_grand_piano');
-  curTuning = curParams.contextTuning;
-  var words = TabCodeDocument.TabWords;
-  var now = leadTime;
-  var started = false;
-  starti = starti || 0;
-  instrument.onready(function(){
-    playing=new Playing();
-    playing.doc = TabCodeDocument;
-    playing.words = words;
-    playing.now = new Date().getTime();
-    $(".playing").each(function(){
-                         this.classList.remove('playing');
-    });
-    for(var i=starti; i<words.length; i++){
-      if(start && !started && start!==words[i]) continue;
-      started = true;
-      if(words[i].tType==="Chord"){
-        if(!playing.wordi && playing.wordi!==0) playing.wordi = i;
-        now = bufferChord(words[i], now, instrument, i, words);
-      }
-      if(end && end===words[i]) break;
-    }
-    TabCodeDocument.duration = (now-leadTime)*64;
-    $(".playback.control").toggleClass("start", false);
-    $(".playback.control").toggleClass("stop", true);  
-    playingTimeout = setTimeout(switchControls, (now+leadTime)*1000);
-  });
-}
-function jsStop(){
-  if(ctx) ctx.close();
-  $(".playback.control").toggleClass("start", true);
-  $(".playback.control").toggleClass("stop", false);
-  if(playingTimeout){
-    window.clearTimeout(playingTimeout);
-    playingTimeout = false;    
-  }
-  if(playing && playing.timeout){
-    window.clearTimeout(playing.timeout);
-    playing.timeout = false;
-  }
-  ctx = false;
-}
-function switchControls(){
-  $(".playback.control").toggleClass("start", true);
-  $(".playback.control").toggleClass("stop", false);
-  jsStop();
-}
 
+
+// SEARCH RESULT FUNCTIONS
+
+function resultDiagram(result){
+  // Result is of the form index, hit count, vector list
+  var id = result[0];
+  var ribbon = DOMDiv('result-ribbon',  'result-ribbon-'+id, false);
+  var pieceArray = corpusVectors.find(function(x){return x[0]==id;});
+  var pieceDur = pieceArray[2];
+  var vectors = result[2];
+  var queryDur = (TabCodeDocument.duration / 4) / pieceDur;
+  for(var i=0; i<vectors.length; i++){
+    var match = DOMDiv('result-block t'+vectors[i][0]+' p'+vectors[i][1]+' n'+i, 'result-block', false);
+    var prop = Math.min(vectors[i][0]/pieceDur, 1);
+    ribbon.appendChild(match);
+    $(match).css('left', Math.floor(prop*100)+'%');
+    $(match).css('width', Math.max(1, Math.floor(queryDur*100))+'%');
+  }
+  return ribbon;
+}
+function summariseResult(result){
+  // Result is of the form index, hit count, vector list. For now, let's just list vectors.
+  var vectors = result[2];
+//  var intervals = ["a semitone", "a tone", "a minor third", "a third", "a fourth", "a tritone",
+//                  "a fifth", "a minor sixth", "a sixth", "a minor seventh", "a seventh"];
+  var intervals = ["s-tone", "tone", "min 3rd", "3rd", "4th", "aug 4th",
+                  "5th", "min 6th", "6th", "min 7th", "7th"];
+  var out = [];
+  var id = result[0];
+  var title = id.toString().substring(12);
+  var pieceArray = corpusVectors.find(function(x){return x[0]==id});
+  var queryDur = TabCodeDocument.duration;
+//  var targetNotes = corpusVectors[id][1].length;
+//  var targetDur = (corpusVectors[id][1][targetNotes-1][0]);
+  var targetNotes = pieceArray[1].length;
+  var targetDur = pieceArray[2];
+  for(var i=0; i<vectors.length; i++){
+    var str = "";
+    if(vectors[i][0]!=0){
+   
+//      str+= vectors[i][0]/32+" crotchets in";
+//      str+= Math.round(100*(vectors[i][0]/targetDur))+"% ";
+//      str+= title+": durations: "+(vectors[i][0])+"/"+(targetDur-(queryDur / 4))+" ("+Math.round(100*(vectors[i][0]/(targetDur-(queryDur / 4))))+"%)";
+      str+= "at "+(vectors[i][0])+"/"+(targetDur-(queryDur / 4))+" ("+Math.round(100*(vectors[i][0]/(targetDur-(queryDur / 4))))+"% of piece)";
+ //     str += targetDur+" Query is " + queryDur/4 + " ticks long";
+    }
+    else {
+    	str += "at start";
+    }
+    if(vectors[i][1]>0){
+      str+=(str.length ? ", " : "")+"up "+intervals[(vectors[i][1] % 12)-1];
+    } else if (vectors[i][1]<0){
+      str+=(str.length ? ", " : "")+"down "+intervals[(Math.abs(vectors[i][1] % 12))-1];
+    } else { 
+      str+=(str.length ? ", " : "")+"same pitch ";
+    }
+    if(str.length) out.push(str);
+  }
+  return out.length ? "("+out.join("; ")+")" : "";
+}
+function resultOut(num, result, max){
+	var num;
+//  return DOMSpan('resultStats', false, (num+1) + ") "+ Math.round(100*(result[1]/max))+"% "
+//                +summariseResult(result));
+//  return DOMSpan('resultStats', false, (num+1) + ") " + summariseResult(result));
+  var span = DOMSpan('resultStats', false, (num+1) + ") " + summariseResult(result));
+  span.appendChild(resultDiagram(result));
+  return span;
+}
+function GerbodeResultOut(num, result, max){
+	var num;
+//  return DOMSpan('resultStats', false, (num+1) + ") "+ Math.round(100*(result[1]/max))+"% "
+//                +summariseResult(result));
+//  return DOMSpan('resultStats', false, (num+1) + ") " + summariseResult(result));
+  var span = DOMSpan('resultStats', false, (num+1) + ") " + summariseResult(result));
+  span.appendChild(resultDiagram(result));
+  return span;
+}
+var ECOLMStuff = {};
+function corpusSearch(cutOff){
+  if(TabCodeDocument){
+    if(!corpusVectors.length) {
+      getCorpus();
+      window.setTimeout(corpusSearch, 1000, cutOff);
+      return;
+    }
+    tcHide(); // make some screen space
+    var needle = vectorizeTabCodeObject(TabCodeDocument, curParams.contextTuning);
+    ECOLMStuff.query = needle;
+    if(!cutOff) cutOff=Math.round(needle.length/2);
+    cutOff = needle.length;
+    ECOLMStuff.queryDuration = TabCodeDocument.duration;
+    var results = searchCorpusWithIDs(needle, corpusVectors, cutOff);
+    if(!results.length){
+      logger.log('no results');
+    var div = document.getElementById('searchResults');
+    $(div).empty();
+      
+      return;
+    }
+    else logger.log(results);
+    var div = document.getElementById('searchResults');
+    $(div).empty();
+    $(div).show();
+    var top = div.getBoundingClientRect().top;
+    $(div).css("height", "calc(100% - "+(10+top)+"px");
+    for(var i=0; i<results.length; i++){
+      
+      if(document.getElementById("CorpusSelection").value == "ecolm") {
+	var sr = DOMDiv('searchResult', false, resultOut(i, results[i], needle.length));
+	if(!ECOLMStuff[results[i][0]]) ECOLMStuff[results[i][0]] = {};
+	ECOLMStuff[results[i][0]].results = [results[i][1], results[i][2]];
+	resultAjax(results[i][0], sr, ECOLMStuff);
+      }
+      else if(document.getElementById("CorpusSelection").value == "gerbode") {
+	var sr = DOMDiv('searchResult', false, GerbodeResultOut(i, results[i], needle.length));
+	if(!ECOLMStuff[results[i][0]]) ECOLMStuff[results[i][0]] = {};
+	ECOLMStuff[results[i][0]].results = [results[i][1], results[i][2]];
+	resultGerbode(results[i][0].substring(12), sr, ECOLMStuff);
+      }
+      div.appendChild(sr);
+    }
+  }
+}
 function resultMetadata(data){
   var parent = DOMSpan('metadata', false, false);
   if(data.ptitle) {
@@ -394,7 +579,6 @@ function summariseResult(result){
   }
   return out.length ? "("+out.join("; ")+")" : "";
 }
-
 function GerbodeResultTab(){
 //  var stuff = ECOLMStuff[Number(this.id)];
   var this_id = this.id;
@@ -514,53 +698,6 @@ function GerbodeResultOut(num, result, max){
   span.appendChild(resultDiagram(result));
   return span;
 }
-
-var ECOLMStuff = {};
-function corpusSearch(cutOff){
-  if(TabCodeDocument){
-    if(!corpusVectors.length) {
-      getCorpus();
-      window.setTimeout(corpusSearch, 1000, cutOff);
-      return;
-    }
-    tcHide(); // make some screen space
-    var needle = vectorizeTabCodeObject(TabCodeDocument, curParams.contextTuning);
-    ECOLMStuff.query = needle;
-    if(!cutOff) cutOff=Math.round(needle.length/2);
-    cutOff = needle.length;
-    ECOLMStuff.queryDuration = TabCodeDocument.duration;
-    var results = searchCorpusWithIDs(needle, corpusVectors, cutOff);
-    if(!results.length){
-      logger.log('no results');
-      var div = document.getElementById('searchResults');
-      $(div).empty();
-      return;
-    }
-    else logger.log(results);
-    var div = document.getElementById('searchResults');
-    $(div).empty();
-    $(div).show();
-    var top = div.getBoundingClientRect().top;
-    $(div).css("height", "calc(100% - "+(10+top)+"px");
-    for(var i=0; i<results.length; i++){
-      
-      if(document.getElementById("CorpusSelection").value == "ecolm") {
-	var sr = DOMDiv('searchResult', false, resultOut(i, results[i], needle.length));
-	if(!ECOLMStuff[results[i][0]]) ECOLMStuff[results[i][0]] = {};
-	ECOLMStuff[results[i][0]].results = [results[i][1], results[i][2]];
-	resultAjax(results[i][0], sr, ECOLMStuff);
-      }
-      else if(document.getElementById("CorpusSelection").value == "gerbode") {
-	var sr = DOMDiv('searchResult', false, GerbodeResultOut(i, results[i], needle.length));
-	if(!ECOLMStuff[results[i][0].substring(12)]) ECOLMStuff[results[i][0].substring(12)] = {};
-	ECOLMStuff[results[i][0].substring(12)].results = [results[i][1], results[i][2]];
-	resultGerbode(results[i][0].substring(12), sr, ECOLMStuff);
-      }
-      div.appendChild(sr);
-    }
-  }
-}
-
 function Selection(start, finish, query, transposition){
   this.start = start;
   this.finish = finish;
@@ -596,41 +733,4 @@ function Selection(start, finish, query, transposition){
     TabCodeDocument = otcd;
   };
 }
-function playSelection(){
-  var word = $(this).data("word");
-  word.selections[0].play();
-}
-function playDoc(doc){
-  var otcd = TabCodeDocument;
-  TabCodeDocument = doc;
-  jsPlay();
-  TabCodeDocument = otcd;  
-}
-function playOrStop(){
-  if(isPlaying()){
-    jsStop();
-  } else {
-    playDoc($(this).data("doc"));
-  }
-}
-var playingTimeout = false;
-function isPlaying(){
-  return playingTimeout;
-}
-function playOrResume(){
-  if(playing && playing.wordi<playing.doc.TabWords.length){
-    playing.resume();
-  } else {
-    jsPlay();
-  }
-}
-function stopOrPause(){
-  if(playing && playing.timeout){
-    playing.pause();
-  } else if(playing && playing.wordi){
-    TabCodeDocument.TabWords[playing.wordi].DOMObj.classList.remove('playing');
-    playing.wordi = 0;
-  } else {
-    jsStop();
-  }
-}
+

@@ -6,14 +6,15 @@ font-weight: normal;
 font-style: normal;
 }
 
+/* 
 @font-face {
 font-family: 'TabRegular';
-src: url('tabfont-webfont.eot');
 src: local('☺'), url('tabfont-webfont.woff') format('woff'), url('tabfont-webfont.ttf') format('truetype'), url('tabfont-webfont.svg#webfontfr7Oup7E') format('svg');
 font-weight: normal;
 font-style: normal;
 font-size: 95%;
 }
+ */
 @font-face {
     font-family: 'varietie3Rhythms';
     src: url('varietie3-webfont.eot');
@@ -120,7 +121,7 @@ font-size: 95%;
 .clear {
   clear: both;
   width: 100%;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .left {
@@ -148,17 +149,16 @@ font-size: 95%;
 #menubar {
   background-color: #EEE;
   width: 90%;
-/*   height: 28px; */
+  height: 42px;
   padding: 3px;
   margin: 6px;
   border-radius: 8px 8px 0px 0px;
   border: 1px solid #AAB;
 }
-
 #settingsbar {
   background-color: #EEE;
   width: 90%;
-  height: 46px;
+  height: 56px;
   padding: 3px;
   margin: 6px;
   border-radius: 8px 8px 0px 0px;
@@ -395,7 +395,7 @@ embed{
 
 body {
 /*   height: 100%; */
-  overflow: hidden;
+  y-overflow: hidden;
 }
 .resultAnchor {
   text-decoration: none;

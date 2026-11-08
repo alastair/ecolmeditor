@@ -40,18 +40,21 @@
 
 function makeRules(tuning_name, keysig_accids) {
 	var rules = "{<rules>\n<tuning_named>";
-	rules += (tuning_name == "renaissance")? tuning_name : "baroque";
+// 	rules += (tuning_name == "renaissance")? tuning_name : "baroque";
+	rules += "baroque";
 	rules += "</tuning_named>\n<rhythm-font>";
-	rules += (tuning_name == "renaissance")? "varietie" : "weiss";
+// 	rules += (tuning_name == "renaissance")? "varietie" : "weiss";
+	rules += "weiss";
 	rules += "</rhythm-font>\n<pitch>";
-	rules += (tuning_name == "renaissance")? "67" : "65";
+// 	rules += (tuning_name == "renaissance")? "67" : "65";
+	rules += "65";
 	rules += "\n<bass_tuning>(";
-	if(tuning_name == "renaissance") {
-	bassrules = ren_bassrules[keysig_accids+7];
-	}
-	else {
+// 	if(tuning_name == "renaissance") {
+// 	bassrules = ren_bassrules[keysig_accids+7];
+// 	}
+// 	else {
 	bassrules = bar_bassrules[keysig_accids+7];
-	}
+// 	}
 	rules += bassrules;
 	rules += ")</bass_tuning>\n</rules>}";
 	return rules;
@@ -91,11 +94,15 @@ function initialiseTabStuff(resolution, tuning) {
 
 	BarTuning = "65,62,57,53,50,45,43,41,40,38,36,35,33".split(",");
 	RenTuning = "67,62,57,53,48,43,41,40,38,36,35,33,31".split(",");
+	
+	logger.log("BarTuning: "+BarTuning)
 
 	// change default tuning here! (Temporary)
 	for(i=0;i<=BarTuning.length-1;i++) {
 		theTuning[i] = tuning=="baroque"? BarTuning[i] : RenTuning[i] ;
 	}
+
+logger.log("Start tuning: "+theTuning)
 
 	majorKeys["C"]=0;
 	majorKeys["C#"]=7;
@@ -162,10 +169,10 @@ function AdjustKey(NumofAccs, tuning_type) // for now, tuning_type is "renaissan
 //logger.log(NumofAccs)
 //logger.log(theTuning)
 
- 	rules = makeRules(tuning_type, NumofAccs);
-//	rules = makeRules("baroque", NumofAccs);
-
-//logger.log(tabcode)
+// 	rules = makeRules(tuning_type, NumofAccs);
+	rules = makeRules("baroque", NumofAccs);
+	
+	logger.log(rules)
 
 	var accsequence = [];
 
@@ -179,22 +186,32 @@ function AdjustKey(NumofAccs, tuning_type) // for now, tuning_type is "renaissan
 	accsequence[6] = 10;
 	accsequence[7] = 7;
 	j = 1;
+
+// bar tuning: 65,62,57,53,50,45,43,41,40,38,36,35,33
+
 	if (!sharps) {
 		while (j <= (-1 * NumofAccs)) {
-			i = accsequence[j]-1;
-			theTuning[i]--;
+// 			i = accsequence[j]-1;
+			i = accsequence[j];
+			var p=parseInt(theTuning[i]);
+			p--;
+			theTuning[i]=p.toString();
+			logger.log("Changed course "+(i+1)+" to "+theTuning[i]+" accsequence: "+accsequence[j])
 			j++;
 		}
 	}
 	else {
 		while (j <= (NumofAccs)) {
 			i = accsequence[8 - j]-1;
-			theTuning[i]++;
+			var p=parseInt(theTuning[i]);
+			p++;
+			theTuning[i]=p.toString();
 			j++;
 		}
 	}
-	theTuning[12] = theTuning[6] - 12;  // set bottom octave GG
 	logger.log(theTuning)
+// 	theTuning[12] = theTuning[5] - 12;  // set bottom octave GG
+// 	logger.log(theTuning)
 }
 
 function MIDItoTabNote (note) {
@@ -262,18 +279,22 @@ function getMIDI(url,fname) {
 		//get the header
 		PPQ = midi.header.ppq;
 		if(midi.header.tempos.length > 0) BPM = midi.header.tempos[0].bpm;
-		initialiseTabStuff(PPQ, "renaissance");
-//			initialiseTabStuff(PPQ, "baroque");
+// 		initialiseTabStuff(PPQ, "renaissance");
+		initialiseTabStuff(PPQ, "baroque");
 		if(midi.header.timeSignatures.length) {
 			timeSigNum = midi.header.timeSignatures[0].timeSignature[0];
 			timeSigDenom = midi.header.timeSignatures[0].timeSignature[1];
 		}
+
+logger.log("TS: "+timeSigNum+"/"+timeSigDenom)
+
 //			keySig = [midi.header.timeSignatures[0].key,midi.header.timeSignatures[0].scale];
 		if (midi.header.keySignatures.length) { 
 			key = midi.header.keySignatures[0].key;
 	logger.log(midi)
 	logger.log("key = "+key)
-			AdjustKey(midi.header.keySignatures[0].scale == "major"? majorKeys[midi.header.keySignatures[0].key] : minorKeys[midi.header.keySignatures[0].key], "renaissance")
+// 			AdjustKey(midi.header.keySignatures[0].scale == "major"? majorKeys[midi.header.keySignatures[0].key] : minorKeys[midi.header.keySignatures[0].key], "renaissance")
+			AdjustKey(midi.header.keySignatures[0].scale == "major"? majorKeys[midi.header.keySignatures[0].key] : minorKeys[midi.header.keySignatures[0].key], "baroque")
 		}
 
 logger.log("Time Sig: "+timeSigNum+"/"+timeSigDenom)
@@ -423,7 +444,8 @@ function notesToTabcode(allnotes, fname) {
 	tabcode.unshift("");
 	tabcode.unshift("{Imported from MIDI file: "+fname+"}");
 
-	tabcode.unshift(ren_rules); //Need to be absolutely first!
+// 	tabcode.unshift(ren_rules); //Need to be absolutely first!
+	tabcode.unshift(rules); //Need to be absolutely first!
 
 
 // 	tabcodestring += "\n\n" + tabcode.join("\n");
@@ -440,7 +462,6 @@ function get_and_convert_MIDI(url,fname,setAndRedrawTabcode) {
 }
 function setAndRedrawTabcodeFun(code) {
 	 document.getElementById("code").value = code;
-	 gJustify=0;
 	 refreshFromTabCode();
 	 $(document.getElementById('tcshow')).show();
 }

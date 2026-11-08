@@ -1,5 +1,8 @@
+<!DOCTYPE html>
 <html>
 <head>
+	<link rel="icon" href="../ecolm.ico">
+	
 	<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
 	<title>Electronic Corpus of Lute Music -- editors page</title>
 <!-- <link type="text/css" rel="stylesheet" href="../webeditor.css" /> -->
@@ -9,7 +12,6 @@
 	<link type="text/css" rel="stylesheet" href="../features.css" />
 	<link type="text/css" rel="stylesheet" href="three_pane.css" />
 	<script src="../jquery-1.4.4.js" type="text/javascript"></script>
-	
 	<script src="../jquery.scrollTo-1.4.2-min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="../soundfont-player.js"></script>
 	<script type="text/javascript" src="../dom.js"></script>
@@ -21,16 +23,15 @@
 	<script type="text/javascript" src="../buttons.js"></script>
 	<script type="text/javascript" src="../base.js"></script>
 	<script type="text/javascript" src="../basic-drawing.js"></script>
+	<script type="text/javascript" src="../ornaments.js"></script>
 	<script type="text/javascript" src="../tabclasses.js"></script>
 	<script type="text/javascript" src="../parser.js"></script>
-	<script type="text/javascript" src="../ornaments.js"></script>
 	<script type="text/javascript" src="../ornament-buttons.js"></script>
 	<script type="text/javascript" src="../rules.js"></script>
 	<script type="text/javascript" src="../midi_mod_TC.js"></script>
 	<script type="text/javascript" src="../editor.js"></script>
 	<script src="../siamese/siamese.js"></script>
 	<script type="text/javascript" src="test.js"></script>
-	<script type="text/javascript" src="encode.js"></script>
 	<script type="text/javascript" src="user.js"></script>
 	<script type="text/javascript" src="distance.js"></script>
 	<script type="text/javascript" src="../pianoroll-ajax.js"></script>
@@ -38,6 +39,7 @@
 	<script type="text/javascript" src="../imgpreview.js"></script>
 
 	<script type="text/javascript" src="importMIDI.js"></script>
+	<script type="text/javascript" src="Midi.js"></script>
 
 <!-- slider stuff from http://loopj.com/jquery-simple-slider/ -->
 	<script src="simple-slider.js"></script>
@@ -49,8 +51,9 @@
 	<script type="text/javascript" src="test.js">
  -->
 	</script>
-<!-- 	<script type="text/javascript" src="../features.js"></script> -->
+	<script type="text/javascript" src="../features.js"></script>
 	<script>
+				
 		function getEditorScroll() {
 		  var elmnt = document.getElementById("editor_container");
 		  oldTop = elmnt.scrollTop;
@@ -62,96 +65,180 @@
 			border:1px solid black;
 			padding:0.5px 0.5px 4px 0.5px;
 	  	}
-	  </style>
+	
+	</style>
 
+<!-- svg-exportJS prerequisite: canvg -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/canvg/3.0.9/umd.js" integrity="sha512-Wu9XXg78PiNE0DI4Z80lFKlEpLq7yGjquc0I35Nz+sYmSs4/oNHaSW8ACStXBoXciqwTLnSINqToeWP3iNDGmQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pdfkit@0.10.0/js/pdfkit.standalone.js"></script>
 <script type="text/javascript" src="https://bundle.run/blob-stream@0.1.3"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/svg-to-pdfkit@0.1.8/source.js"></script>
 
-<!-- 
-<script src="https://cdn.jsdelivr.net/npm/pdfkit@0.11.0/js/pdfkit.min.js"></script>
-<script src="https://github.com/devongovett/blob-stream/releases/download/v0.1.3/blob-stream.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/svg-to-pdfkit@0.1.8/source.min.js"></script>
- -->
-
-<!-- svg-exportJS prerequisite: canvg -->
-<!-- <script src="https://unpkg.com/canvg@3.0.1/lib/umd.js"></script> -->
 <script src="https://unpkg.com/deepmerge@3.3.0/dist/umd.js"></script>
+
+<!-- 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/canvg/3.0.9/umd.js" integrity="sha512-Wu9XXg78PiNE0DI4Z80lFKlEpLq7yGjquc0I35Nz+sYmSs4/oNHaSW8ACStXBoXciqwTLnSINqToeWP3iNDGmQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
+</script>
+ -->
+<!-- <script src="https://unpkg.com/canvg@3.0.1/lib/umd.js"></script> -->
+<!-- <script src="https://unpkg.com/canvg@4.0.2/lib/umd.js"></script> -->
+
+
 <!-- svg-exportJS plugin -->
-<script src="https://sharonchoong.github.io/svg-exportJS/svg-export.min.js"></script>
-<!-- <script src="svg-export.js"></script> -->
+<!-- <script src="https://sharonchoong.github.io/svg-exportJS/svg-export.min.js"></script> -->
+<script src="./svg-export.js"></script>
+
+<script> 
+	var not_printing = true;
+	readonly = (!editable)
+	var upbeat = false;
+</script>
 
 <script>
-// Function to export SVG to PDF using the two JS libraries above from: https://morioh.com/p/287697cc17da
-function export_SVG_as_PDF() {
+// Function to export SVG to PDF using the JS libraries above from: https://morioh.com/p/287697cc17da
+function export_SVG_as_PDF(small_option) {
+ 	var old_readonly = readonly;
+ 	readonly = 1;
+ 	not_printing = false;
+	refresh();
 	var filename = prompt("Export filename:", "tablature");
-	if (filename != null) {
-
-		svgExport.downloadPdf(document.getElementById("notation"),filename, { 
-               pdfOptions: {
-                    customFonts: [
-//                      { url: "../pdf_fonts/tabfontwebfont.ttf", fontName: "TabRegular" },
-//                      { url: "../pdf_fonts/varietie4webfont.ttf", fontName: "Varietie3Rhythms" },
-//                      { fontName: "Varietie3", url: "../pdf_fonts/varietiefretsornswebfont.ttf"},
-                     { url: "../pdf_fonts/varietie4webfont.ttf", fontName: "Varietie3" },
-//                      { url: "../pdf_fonts/varietie4webfont.ttf", fontName: "Varietie3FretsAndOrns" },
-//                      { url: "../pdf_fonts/varietie4webfont.ttf ", fontName: "Varietie3-ts" }
-
-// FIXME Still need to rename TabFont/Weiss for baroque tab
-
-                    ]
-               },
-                useCSS: true
-		} 
-     )
-  }
-}
-function export_SVG_as_JPG() {
-	var filename = prompt("Export filename:", "tablature");
-	if (filename != null) {
-//   	downloadPDF(document.getElementById("notation"),filename)
-		svgExport.downloadJpeg(document.getElementById("notation"),filename, { 
+	if (filename != null) {		
+	if(!small_option)	{
+			svgExport.downloadPdf(document.getElementById("notation"),filename, { 
+					pdfOptions: {
+						customFonts: [
+						 { url: "../pdf_fonts/tabfontwebfont.ttf", fontName: "Tab" },
+						 { url: "../varietie4-webfont.ttf", fontName: "Varietie3Rhythms" },
+						 { url: "../varietie4-webfont.ttf", fontName: "Varietie3" },
+						 { url: "../varietie4-webfont.ttf", fontName: "Varietie3FretsAndOrns" },
+						 { url: "../varietie4-webfont.ttf ", fontName: "Varietie3-ts" }
+						]
+					},
+					useCSS: true
+				} 
+			 )
+     	}
+     else {
+			svgExport.downloadPdf(document.getElementById("notation"),filename, { 
+			pdfOptions: {
+				customFonts: [
+				 { url: "../pdf_fonts/tabfontwebfont.ttf", fontName: "Tab" },
+				 { url: "../varietie4-webfont.ttf", fontName: "Varietie3Rhythms" },
+				 { url: "../varietie4-webfont.ttf", fontName: "Varietie3" },
+				 { url: "../varietie4-webfont.ttf", fontName: "Varietie3FretsAndOrns" },
+				 { url: "../varietie4-webfont.ttf ", fontName: "Varietie3-ts" }
+				]
+			},
+			size: [40,80],
 			useCSS: true
 		} 
+	 )
+
+     }
+     not_printing = true; // restore insertion boxes
+     readonly = old_readonly;
+     refresh();
+  }
+}
+
+function export_SVG_as_JPG() {
+	var old_readonly = readonly;
+	readonly = 1;
+	not_printing = false;
+	refresh();
+	var filename = prompt("Export filename:", "tablature");
+	if (filename != null) {
+		svgExport.downloadJpeg(document.getElementById("notation"),filename, { 
+			pdfOptions: {
+				customFonts: [
+				 { url: "../pdf_fonts/tabfontwebfont.ttf", fontName: "Tab" },
+				 { url: "../varietie4-webfont.ttf", fontName: "Varietie3Rhythms" },
+				 { url: "../varietie4-webfont.ttf", fontName: "Varietie3" },
+				 { url: "../varietie4-webfont.ttf", fontName: "Varietie3FretsAndOrns" },
+				 { url: "../varietie4-webfont.ttf ", fontName: "Varietie3-ts" }
+				]
+			},
+			useCSS: true
+// 		  width: 200,
+// 		  height: 200
+		} 
      )
   }
+  not_printing = true; // restore insertion boxes
+  readonly = old_readonly;
+  refresh();
 }
 function export_SVG_as_PNG() {
+ 	var old_readonly = readonly;
+ 	readonly = 1;
+	not_printing = false;
+	refresh();
 	var filename = prompt("Export filename:", "tablature");
 	if (filename != null) {
-//   	downloadPDF(document.getElementById("notation"),filename)
 		svgExport.downloadPng(document.getElementById("notation"),filename, { 
+			pdfOptions: {
+				customFonts: [
+				 { url: "../pdf_fonts/tabfontwebfont.ttf", fontName: "Tab" },
+				 { url: "../varietie4-webfont.ttf", fontName: "Varietie3Rhythms" },
+				 { url: "../varietie4-webfont.ttf", fontName: "Varietie3" },
+				 { url: "../varietie4-webfont.ttf", fontName: "Varietie3FretsAndOrns" },
+				 { url: "../varietie4-webfont.ttf ", fontName: "Varietie3-ts" }
+				]
+			},
 			useCSS: true
 		} 
      )
   }
-}
-function export_SVG_as_SVG() {
-	var filename = prompt("Export filename:", "tablature");
-	if (filename != null) {
-//   	downloadPDF(document.getElementById("notation"),filename)
-		svgExport.downloadSvg(document.getElementById("notation"),filename, { 
-			useCSS: true
-		} 
-     )
-  }
+  not_printing = true; // restore insertion boxes
+  readonly = old_readonly;
+  refresh();
 }
 
-// gJustify = 0;
-// function JustifySystems() {
-// 	gJustify = 10;
-// 	TabCodeDocument.draw();
-// 	refresh();
-// }
+function small_SVG() {
+	export_SVG_as_SVG("chord-0")
+}
+
+function export_SVG_as_SVG(chords) {
+ 	var old_readonly = readonly;
+ 	readonly = 1;
+	not_printing = false;
+  clearSVG($("notation.rendered"));
+	refresh();
+	if(!chords) chords = "notation";
+	var filename = prompt("Export filename:", "tablature");
+	if (filename != null) {
+// 		svgExport.downloadSvg(document.getElementById(chords),filename, { 
+
+		svgExport.downloadPng(
+		  document.getElementById(chords), // SVG DOM Element object to be exported. Alternatively, a string of the serialized SVG can be passed
+		  filename, // chart title: file name of exported image
+		  { width: 200, height: 200, 
+// 		  });
+
+
+			pdfOptions: {
+				customFonts: [
+				 { url: "../pdf_fonts/tabfontwebfont.ttf", fontName: "Tab" },
+				 { url: "../varietie4-webfont.ttf", fontName: "Varietie3Rhythms" },
+				 { url: "../varietie4-webfont.ttf", fontName: "Varietie3" },
+				 { url: "../varietie4-webfont.ttf", fontName: "Varietie3FretsAndOrns" },
+				 { url: "../varietie4-webfont.ttf ", fontName: "Varietie3-ts" }
+				]
+			},
+			useCSS: true
+		});
+  }
+  not_printing = true; // restore insertion boxes
+  readonly = old_readonly;
+  refresh();
+}
 
 </script>	  
 	  
 	  
 </head>
-<body onload="javascript:initialiseTestPage(urlParams); refresh2(); tcHide();">
-<!-- 
-<body onload="javascript:initialiseTestPage(true);">
- -->
+<body onload="javascript:initialiseTestPage(true); tcShow(); document.getElementById('switchTabType').click(); document.getElementById('switchTabFont').click();">
+
 <div id="top_fixed_container">
 	<div id="banner">
 		<div class="logo_centre">
@@ -164,6 +251,8 @@ function export_SVG_as_SVG() {
 		</div>
 		<div class="widerright" id="playback">
 			<button onclick="javascript:  playOrResume(); ">Play</button> 
+<!-- 			<button onclick="javascript:  jsPlay(false, false, (start_wordi-1)); ">Play from click</button>  -->
+			<button onclick="javascript:  playFrom(start_wordi); ">Play from click</button> 
 			<button onclick="javascript:  stopOrPause(); ">Stop</button> 
 			<select id="soundSelect">
 				<option value="G_lute" selected>G lute</option>
@@ -191,38 +280,255 @@ function export_SVG_as_SVG() {
  -->
 		</div>
 	</div>
-	<div id="settingsbar" class="clear" style="height: 48px">
+	<div id="settingsbar" class="clear">
 		<div class="left">
-			<button class="reditbutton" id="switchTabType" onclick="toggleTabType(this)">Tab: Italian</button> 
-			<button class="reditbutton" id="switchTabFont" onclick="toggleFont(this)">Font: Italian</button> 
-			<button class="editbutton" id="switchTuning" onclick="rotateTuning(this)">Renaissance G</button> 
+			<button class="reditbutton" id="switchTabType" onclick="toggleTabType(this)">Tab: Italian</button> <button class="reditbutton" id="switchTabFont" onclick="toggleFont(this)">Font: Italian</button> <button class="editbutton" id="switchTuning" onclick="rotateTuning(this)">Renaissance G</button> 
 		</div>
 <!-- 		<span class="right" id="barnum_highlight" class="clear"> -->
-		<div style="height: 12px; ">
-			<span  id="barnum_highlight" class="clear">
-				<span class="barNumChoiceLabel"><small>Bar number display:</small></span> 
-				<select id="BarnumberDisplay"  onchange="SetBarNumDisplay(this.value);">
-					<option value="none" selected>None</option>
-					<option value="systems">Every system</option>
-					<option value="five_bars">Every five bars</option>
-					<option value="all_bars">Every bar</option>
-				</select>
-			<span id="print_controls" class="clear">
-				<small>Export as: </small><button  onclick="export_SVG_as_PDF()"><small>PDF</small></button>
-				&nbsp;&nbsp;&nbsp;
-				<label  for="on_line_check"><small>Letters on lines</small></label>
-				<input type="checkbox" id="on_line_check" onchange="refresh()">
-			</span>
-		</div>
+		<span  id="barnum_highlight" class="clear">
+			<span class="barNumChoiceLabel"><small>Bar number display:</small></span> 
+			<select id="BarnumberDisplay"  onchange="SetBarNumDisplay(this.value);">
+				<option value="none" selected>None</option>
+				<option value="systems">Every system</option>
+				<option value="five_bars">Every five bars</option>
+				<option value="all_bars">Every bar</option>
+			</select>
+		<span id="print_controls" class="clear">
+			<small>Export as: </small>
+				<button  onclick="export_SVG_as_PDF()"><small>PDF</small></button>
+				<button  onclick="small_SVG()"><small>1-chord SVG</small></button>
+				<button  onclick="range_SVG()"><small>Range as SVG</small></button>
+
+		<script>
+			function range_SVG() {
+// 				First get range between two time-points:
+				let start = parseInt(prompt("Enter the start time: "));
+// 				We don't actually include the chord at 'end', but we stop there
+				let end = parseInt(prompt("Enter the end time: "));
+				logger.log("Start at "+start+" End at "+end);
+				if(start >= end) {
+					alert("End time must be greater than start time!")
+					return
+				}
+				clearHilites(true);
+				selectRange(start,end, "red", true);
+			}				
+			function hilite_by_beat(upbeat){
+				var lasttime = 0;
+				var end = 0;
+				lasttime = clearHilites(false);
+				
+				let step = parseInt(prompt("Enter beat duration\n(Crotchet = 128) ","128"));
+				colour = "red";
+				var initial_start = get_firstChordTime(upbeat)
+				var beat_skip = parseInt(initial_start/step)
+				logger.log("beat_skip = "+ beat_skip)
+				var start = initial_start;
+				for(z=beat_skip;;z++) {
+					if((start > z*step)) continue;
+// 					start = z*step; end = start+step;
+					end = start+step;
+					logger.log(end - start)
+					
+					if(end > lasttime) return
+					
+					if(colour=="red") colour="green";
+					else colour="red";
+					selectRange(start, end, colour, false);
+					start += step; 
+				}
+			}
+			// returns object with first and last chord times
+			function firstLastChordTimes(upbeat){
+				var svg_element = document.getElementById("notation");
+				var svg_children = svg_element.children;
+				
+				// only good for single chord upbeat!
+				var upbeatcount = 0; 
+				if(document.getElementById('upbeat_checkbox').checked == true) {
+					logger.log("In firstLastChordTimes: "+upbeat)
+					upbeatcount = 1;
+					logger.log("In firstLastChordTimes: "+upbeatcount)
+				}
+
+// 				Get last chord ID/time
+// 				var foundstart = false;
+				var starttime = 0;
+				var theID = "";
+				var thetime = 0
+				for(p=0;p<svg_children.length;p++) {
+					var theclass = svg_children[p].getAttribute("class");
+					
+					if(theclass == "barline") continue;
+					if(theclass == "chord editable") {
+						if(upbeatcount == 0) {
+							theID = svg_children[p].getAttribute("id");
+							starttime = parseInt(theID.substring(6))
+// 							foundstart = true;
+							continue;
+						}
+						upbeatcount--;
+						theID = svg_children[p].getAttribute("id");
+						thetime = parseInt(theID.substring(6))
+					}
+				}
+				logger.log(upbeat + "\n"+upbeatcount);
+				logger.log("firsttime: "+starttime+"\nlasttime: "+ thetime);
+				return {"firsttime": starttime, "lasttime": thetime}
+			}
+			function clearHilites(refreshTab)	{
+				var end = 0;
+				var svg_element = document.getElementById("notation");
+				var svg_children = svg_element.children;
+				
+// 				Get last chord ID/time
+				for(p=0;p<svg_children.length;p++) {
+					var theID = svg_children[p].getAttribute("id");
+					var theclass = svg_children[p].getAttribute("class");
+					if(theclass == "chord editable") {
+						var thetime = parseInt(theID.substring(6))
+						end = thetime;
+					}
+// 					Clear hilites in this chord
+					var items = svg_children[p].children
+					for(q=0;q<items.length;q++) if( items[q].getAttribute("fill")) items[q].setAttribute("fill","black")
+				}
+				if(refreshTab) refresh();
+				return end;
+			}
+						
+			function sanitiseHTML(html) {
+				var parser = new DOMParser();
+				var parsedHtml = parser.parseFromString(html, "text/html");
+				let tags = parsedHtml.querySelectorAll("svg");
+
+				
+			}
+			
+			function selectRange(start, end, colour,refreshTab) {
+				var old_readonly = readonly;
+				readonly = 1;
+				var lasttime = 0;
+
+				var svg_element = document.getElementById("notation");
+				var svg_children = svg_element.children;
+				
+				var sel_array = [];
+				var thetime = 0
+				var systemcount = 0;
+				var needID = false; // Need to complete prev ID with time-suffix
+				for(p=0;p<svg_children.length;p++)	{
+
+					var theclass = svg_children[p].getAttribute("class");
+					switch(theclass) {
+						case "Staves":
+							// Use this to get suitable y-offset for next elements
+							systemcount++;
+							logger.log("Stave "+systemcount)
+							var staffID = "staves-"+systemcount;
+							sel_array.push({"id":staffID, "class":theclass,"svg":svg_children[p].outerHTML});				
+							break;
+						case "chord editable":
+						case "chord readonly":
+							// Get leftmost x as x-offset ?? Then increment by a space
+							var theID = svg_children[p].getAttribute("id");
+							thetime = parseInt(theID.substring(6))
+							// Can only add time to barline ID when we know time of next chord!
+							if(needID) {
+								var barID = "barline-"+thetime;
+								if(sel_array.length) sel_array[sel_array.length-1].id = barID;
+// 								logger.log("Added time to barline at "+thetime)
+								needID = false
+							}
+							if(thetime>end) break
+							if(thetime >= start) {
+// 								logger.log(theclass +" : "+ theID + " at time "+ thetime)
+// 								var html =  "<html><body><svg>"+svg_children[p].outerHTML+"</svg></body></html>"
+// 								sanitiseHTML(html); 
+								sel_array.push({"id":theID,"class":theclass,"svg":svg_children[p].outerHTML});
+							}
+							break;
+						case "barline":
+							if(thetime>end) break
+							if(thetime >= start) {
+// 								logger.log(theclass +" : [no ID yet] at time "+ thetime)
+// 								var html =  "<html><body><svg>"+svg_children[p].outerHTML+"</svg></body></html>"
+// 								sanitiseHTML(html); 
+								sel_array.push({"class":theclass,"svg":svg_children[p].outerHTML});
+								needID = true;
+							// Can only add time to barline ID when we know time of next chord! (See above under case "chord ...")
+							}
+							break;
+					}
+				}
+				var svg_string = "";
+				for(r=0;r<sel_array.length;r++) {
+					if(sel_array[r].class.includes("chord")) { 
+						document.getElementById(sel_array[r].id).setAttribute("fill",colour)
+					}
+					svg_string += sel_array[r].svg+"\n"
+				}
+				if(sel_array.length){
+					logger.log(sel_array)
+				}
+				readonly = old_readonly;
+			}
+		</script>
+
+			&nbsp;&nbsp;&nbsp;									
+			
+			<label  for="on_line_check"><small>Letters on lines</small><input type="checkbox" checked id="on_line_check" name="on_line_check" onchange="refresh()"></label>
+			&nbsp;&nbsp;&nbsp;
+			
+<!-- 
+			<label><small>Nicer printing</small><input type="checkbox" name="nice_print" checked onchange="toggleNicePrint()"></label>
+			&nbsp;&nbsp;&nbsp;
+ -->
+			<script>
+				if(typeof nice_print == "undefined") var nice_print = true;
+// 				function toggleNicePrint() {
+// 					if(nice_print) nice_print=false;
+// 					else nice_print = true;
+// 					refresh();
+// 				}
+			</script>
+
+			<label><small>Justified</small><input type="checkbox" name="justify" onchange="toggleJustify()"></label>
+			<script>
+
+				var drawnSymbols_arr = [];
+				
+				function toggleJustify() {
+					if(justify) justify=false;
+					else justify = true;					
+					refresh();
+				}
+		
+	</script>
+
+			<label><small>Title</small><input type="checkbox" checked name="title" onchange="toggleTitle()"></label>
+			<script>
+
+				var title = true;
+				
+				function toggleTitle() {
+					if(title) title=false;
+					else title = true;					
+					refresh();
+				}
+		
+	</script>
+
+		</span>
 		<br>
-		<span id="rhythm-sign_controls" overflow: hidden;>
+		<span id="rhythm-sign_controls">
 			<span style="border:1px solid black;padding:2px">
-				<label  for="upbeat"><small>Upbeat?</small></label>
-				<input   type="checkbox" id="upbeat_checkbox" name="upbeat" onchange="SetBarNumDisplay();SetgStartTime();">
+				<label  ><small>Upbeat?</small>
+				<input   type="checkbox" id="upbeat_checkbox" name="upbeat" onchange="SetBarNumDisplay();"></label>
 			</span>
 			<span style="border:1px solid black;padding:2px">
-				<label  for="upbeat"><small>Crotchet: <img id="q_flag" src="flag_Q.jpg" height="14px"></small></label>
-				<input   type="checkbox" id="reduction_checkbox" name="upbeat" onchange="toggleDoubleDurs()">
+				<label  ><small>Crotchet: <img id="q_flag" src="flag_Q.jpg" height="14px"></small>
+				<input   type="checkbox" id="reduction_checkbox" name="upbeat" onchange="toggleDoubleDurs()"></label>
 			</span>
 <script>
 	var DoubleDurs = false;
@@ -256,15 +562,11 @@ function export_SVG_as_SVG() {
 				<label  for="quaternarybeat_dot_check"><span class="quaternarybeat_dot"><small>96</small></span></label>
 				<input   type="checkbox" id="quaternarybeat_dot_check" name="quaternarybeat_dot" onchange="refresh()" >
 			</span>
-			</span> <!-- End of span "rhythm-sign_controls" -->
-
-	<!-- 
-		<button disabled id="justify_button" onclick="JustifySystems()">
-				Justify
-			</button>
 		</span>
-		<span width="24px" class="spacer">&nbsp;&nbsp;&nbsp;</span>
- -->		
+
+			&nbsp;&nbsp;&nbsp;									
+			
+				<button  onclick="hilite_by_beat(document.getElementById('upbeat_checkbox').checked)"><small>Highlight beats</small></button>
 
 <!-- 
 		<span id="chord_hlite_controls">
@@ -281,202 +583,160 @@ function export_SVG_as_SVG() {
 <!-- 
 <div id="editor_container" class="editor_left" style="bottom: 0; margin-left: 15px; margin-right: 15px; margin-bottom: 15px; width: 1000px;top: 270px; position: fixed; y-overflow: auto; overflow-x: scroll;" onscroll="getEditorScroll()">
  -->
-<div id="editor_container" class="editor_left" style="bottom: 0; margin-left: 15px; margin-right: 15px; margin-bottom: 15px; width: 1200px; position: relative; y-overflow: scroll; overflow-x: scroll;" onscroll="getEditorScroll()">
+<div id="editor_container" class="editor_left" style="bottom: 0; margin-left: 15px; margin-right: 15px; margin-bottom: 15px; width: 1200px; position: relative; y-overflow: scroll; overflow-x: scroll;resize: horizontal;" onscroll="getEditorScroll()">
 	<div id="editor">
 		<div id="rendered" class="notation">
+<!-- 			<svg class="rendered" id="notation" width="900px"  ></svg>  -->
 			<svg class="rendered" id="notation" width="900px"  ></svg> 
 		</div>
 	</div>
 </div>
 <div id="resultTab" class="hasControls">
 </div>
-<div id="code_container" style="width: 30%; position: fixed; top: 18px; left: 75%">
+<div id="code_container" style="width: 30%; position: fixed; top: 30px; left: 75%">
 	<div id="codediv" >
+<!-- 
 		<button id="choose_tcfile" onclick="displayTabCodeFromTCFile()">Import TabCode</button>
 		<span id="tcchooser" hidden>
-			<input type="file" id="TCfiletoRead" class="tc-file-input" />
+ -->
+<!-- 			<input type="file" id="TCfiletoRead" class="tc-file-input" /> -->
+
+<div class="input_container" id="TCfiletoRead" onclick="displayTabCodeFromTCFile()">
+  <label id="TClabel" for="TCfiles" class="btn" 
+  style="
+		border: 1px solid red;
+		border-radius: 10px;
+		padding: 5px 10px;
+		font-family: 'Helvetica', sans-serif;
+		transition: .5s;
+		width: 250px;
+	"
+>Import TabCode</label>
+  <input id="TCfiles" style="display:none;" type="file">
+</div>
+<script>
+
+document.querySelector("#TCfiles").onchange = function() {
+  const fileName = this.files[0]?.name;
+  const label = document.querySelector("label[for=TCfiles]");
+//   const label = document.querySelector("TClabel");
+  label.innerText = fileName + " (click to change)" ?? "Import a TabCode File";
+};
+
+  function displayTabCodeFromTCFile() {
+// 	document.getElementById('choose_tcfile').hidden=true;
+// 	document.getElementById('tcchooser').hidden=false;
+	document.getElementById('midichooser').hidden=true;
+	document.getElementById('choose_midifile').hidden=false;
+// 	document.getElementById("TCfiletoRead").addEventListener("change",function(){
+	document.getElementById("TCfiles").addEventListener("change",function(){
+		  var tcfile = this.files[0];
+		  var name = tcfile.name;
+		  logger.log(name + " selected to be displayed")
+		  if (tcfile) {
+			 if(name.substring(name.length-3,name.length)==".tc") {
+				 var reader = new FileReader();
+				 reader.onload = function (evt) {
+				   document.getElementById("code").value = evt.target.result;
+				 };
+				 reader.onerror = function (evt) {
+				   logger.error("An error ocurred reading the file",evt);
+				 };
+				 reader.readAsText(tcfile, "UTF-8");
+				 gJustify=0;
+				 refreshFromTabCode();
+				 $(document.getElementById('tcshow')).show();
+				}
+			else alert("Not a TabCode file! Please try again!")
+			}
+		},false);
+	}
+
+</script>
+<!-- 
+			<label for="TCfiletoRead" class="btn">Select TC file</label>
+			<input type="file" id="TCfiletoRead" ></div>
+ -->
 		</span>
 		<br>
 		<button id="choose_midifile" onclick="displayTabCodeFromMIDIFile()">Import MIDI</button>
-		<span id="midichooser" hidden>
-			<input type="file" id="MIDIfiletoRead" class="midi-file-input" /> 
-		</span>
-		<script>
-		
-		// Some time soon, switch to using the following for read/save of local (CLIENT) files!!!
-// 		// 		from https://web.dev/browser-fs-access/
-// 		// The imported methods will use the File
-// 		// System Access API or a fallback implementation.
-// 		import {
-// 		  fileOpen,
-// 		  directoryOpen,
-// 		  fileSave,
-// 		} from 'https://unpkg.com/browser-fs-access';
+		<span id="midichooser" hidden><input type="file" id="MIDIfiletoRead" class="midi-file-input" /> </span>
+<script>
 
-readSyncDataURL = function(file) {
-//    var url = URL.createObjectURL(file); //Create Object URL
-    var url =file;
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", url, false); //Synchronous XMLHttpRequest on Object URL
-    xhr.overrideMimeType("text/plain; charset=x-user-defined"); //Override MIME Type to prevent UTF-8 related errors
-    xhr.send();
-    URL.revokeObjectURL(url);
-    var returnText = "";
-    for (var i = 0; i < xhr.responseText.length; i++) {
-      returnText += String.fromCharCode(xhr.responseText.charCodeAt(i) & 0xff);
-    }; //remove higher byte
-//    return "data:" + file.type + ";base64," + btoa(returnText); //Generate data URL
-    if(xhr.status == 200) return returnText;
-    }
-
-
-
-			async function getTabCode(url) {
-// 			  const request = await $.get(url)  
-// 			  return request;
-			result = await readSyncDataURL(url);
-// 			  logger.log(result)
-			return result;
+  function displayTabCodeFromURL() {
+	  var tcfile = urlParams.get("tc_path");
+	  var name = tcfile.substr(tcfile.lastIndexOf("/")+1);
+	  if (tcfile) {
+	  logger.log(tcfile)
+		 if(name.substring(name.length-3,name.length)==".tc") {
+			$.get(tcfile,function(data) {
+				if (data.length) {
+					 $(document.getElementById('tcshow')).show();
+					 $('#code_container').css('display', 'initial');
+					 document.getElementById("code").value = data;
+					 gJustify=0;
+					 refreshFromTabCode();
+				} 
+				else {
+					alert("Nothing in file "+tcfile+" !!");
+				}
+			});
 			}
+		else alert("Not a TabCode file! Please try again!")
+		}
+	}
 
-		async  function displayTabCodeFromURL() {
-				  var tcfile = urlParams.get("tc_path");
-				  var name = tcfile.substr(tcfile.lastIndexOf("/")+1);
-				  if (tcfile) {
-					 if(name.substring(name.length-3,name.length)==".tc") {
-						await $.get(tcfile,function(data) {
-							if (data.length) {
-								 $(document.getElementById('tcshow')).show();
-								 logger.log(data)
-								 $('#code_container').css('display', 'initial');
-								 document.getElementById("code").value = data;
-								 gJustify=0;
-								 logger.log(document.getElementById("code").value)
-								 refreshFromTabCode();
-							} 
-							else {
-								alert("Nothing in file "+tcfile+" !!");
-							}
-						});
+  function displayTabCodeFromMIDIFile() {
+	document.getElementById('choose_midifile').hidden=true;
+	document.getElementById('midichooser').hidden=false;	
+	document.getElementById('tcchooser').hidden=true;	
+	document.getElementById('choose_tcfile').hidden=false;
+	document.getElementById("MIDIfiletoRead").addEventListener("change",function(){
+		  var midifile = this.files[0];
+		  var name = midifile.name;
+		  if (midifile) {
+			 logger.log("File is "+name)
+			 if(name.substring(name.length-4,name.length)==".mid") {
+				 theTabCode = get_and_convert_MIDI(tempPath(midifile),name,setAndRedrawTabcodeFun); // user might want to change name
+				 logger.log(theTabCode)
+				}
+			else alert(name+" is not a MIDI file! Please try again!")
+			}
+		},false);
+	}
+</script>
 
-/*
-					    getTabCode(tcfile)
-						.then ((data) => {
-							console.log(data)
-							if (data.length) {
-								 $(document.getElementById('tcshow')).show();
-								 $('#code_container').css('display', 'initial');
-								 document.getElementById("code").value = data;
-								 gJustify=0;
-								 refreshFromTabCode();
-								 $(document.getElementById('tcshow')).show();
-							} 
-							else {
-								alert("Nothing in file "+tcfile+" !!");
-							}})
-*/
-							
-					}
-					else alert("Not a TabCode file! Please try again!")
-				    }
-// 				},false);
-			}
-			
-		  function displayTabCodeFromTCFile() {
-			document.getElementById('choose_tcfile').hidden=true;
-			document.getElementById('tcchooser').hidden=false;
-			document.getElementById('midichooser').hidden=true;
-			document.getElementById('choose_midifile').hidden=false;
-			document.getElementById("TCfiletoRead").addEventListener("change",function(){
-				  var tcfile = this.files[0];
-				  var name = tcfile.name;
-				  if (tcfile) {
-					 if(name.substring(name.length-3,name.length)==".tc") {
-						 var reader = new FileReader();
-						 reader.onload = function (evt) {
-						   document.getElementById("code").value = evt.target.result;
-						 };
-						 reader.onerror = function (evt) {
-						   logger.error("An error ocurred reading the file",evt);
-						 };
-						 reader.readAsText(tcfile, "UTF-8");
-						 gJustify=0;
-						 refreshFromTabCode();
-						 $(document.getElementById('tcshow')).show();
-					    }
-					else alert("Not a TabCode file! Please try again!")
-				    }
-				},false);
-			}
-			
-		  function displayTabCodeFromMIDIFile() {
-			document.getElementById('choose_midifile').hidden=true;
-			document.getElementById('midichooser').hidden=false;	
-			document.getElementById('tcchooser').hidden=true;	
-			document.getElementById('choose_tcfile').hidden=false;
-			document.getElementById("MIDIfiletoRead").addEventListener("change",function(){
-				  var midifile = this.files[0];
-				  var name = midifile.name;
-				  if (midifile) {
-					 logger.log("File is "+name)
-					 if(name.substring(name.length-4,name.length)==".mid") {
-// 					 	var reader = new FileReader();
-// 						 reader.onload = function (evt) {
-// 						 logger.log(evt);
- 						 theTabCode = get_and_convert_MIDI(tempPath(midifile),name,setAndRedrawTabcodeFun); // user might want to change name
-//						 var theTabCode = get_and_convert_MIDI(midifile,name); // user might want to change name
-						 logger.log(theTabCode)
-// 						 document.getElementById("code").value = theTabCode;
-// // 						 };
-// // 						 reader.onerror = function (evt) {
-// // 						   logger.error("An error ocurred reading the file",evt);
-// // 						 };
-// 						 gJustify=0;
-// 						 refreshFromTabCode();
-// 						 $(document.getElementById('tcshow')).show();
-					    }
-					else alert(name+" is not a MIDI file! Please try again!")
-				    }
-				},false);
-			}
-		</script>
-
-		<br>
+<!-- 		<br> -->
 		<button id="tcshow" onclick="tcShow();" style="display:none">Show TabCode </button> 
 		<button id="tchide" onclick="tcHide();"  style="display:none">Hide TabCode</button> 
 		<div id="tcspan">
-<!-- 
-			Tabcode for this piece:<br />
- -->
 			<textarea style=" height:400px; width:250px; resize: both" rows="6" cols="68" id="code" onkeyup="if(!TabCodeDocument || TabCodeDocument.code != this.value){ refreshFromTabCode();}"></textarea>
 			<br>
 			<button id="tcdownload" onclick="download();">Download TabCode </button> 
 		</div>
 
-<script>
+	<script>
 
-	// from: https://robkendal.co.uk/blog/2020-04-17-saving-text-to-client-side-file-using-vanilla-js
-	function download() {
-		const downloadToFile = (content, filename, contentType) => {
-			const a = document.createElement('a');
-			const file = new Blob([content], {type: contentType});
-			a.href= URL.createObjectURL(file);
-			a.download = filename;
-			a.click();
-			URL.revokeObjectURL(a.href);
-		};
-// 		document.querySelector('#tcdownload').addEventListener('click', () => {
+		// from: https://robkendal.co.uk/blog/2020-04-17-saving-text-to-client-side-file-using-vanilla-js
+		function download() {
+			const downloadToFile = (content, filename, contentType) => {
+				const a = document.createElement('a');
+				const file = new Blob([content], {type: contentType});
+				a.href= URL.createObjectURL(file);
+				a.download = filename;
+				a.click();
+				URL.revokeObjectURL(a.href);
+			};
 			const textArea = document.getElementById('code');
 			var new_filename = prompt("New filename", "tabcode.tc");
 			if (new_filename != null) {
 				downloadToFile(textArea.value, new_filename, 'text/plain');
-  			}
-  			else {
-  				alert("No filename given! Try Again!");
-  			}		
-// 		});
-	}
-</script>
+			}
+			else {
+				alert("No filename given! Try Again!");
+			}		
+		}
+	</script>
 
 			<br />
 		</div>
@@ -490,28 +750,8 @@ readSyncDataURL = function(file) {
 </div>
  
  <script>
- 	
- 	beat_boxes = [
- 		{check:"doublebeat_check",value:1024},
-		{check:"mainbeat_check",value:512},
-		{check:"secondarybeat_check",value:256},
-		{check:"tertiarybeat_check",value:128},
-		{check:"quaternarybeat_check",value:64},
-		{check:"mainbeat_dot_check",value:768},
-		{check:"secondarybeat_dot_check",value:384},
-		{check:"tertiarybeat_dot_check",value:192},
-		{check:"quaternarybeat_dot_check",value:96}
-	];
-	function getBeatBox(val) {
-		for(i=0;i<beat_boxes.length;i++) {
-			if(beat_boxes[i].value == val) return beat_boxes[i].check;
-		}
-		return false;
-	}
- 	
  	const urlParams = new URLSearchParams(window.location.search);
  	var hide_systembreaks = false; // we will hide them for TabCode display version
-
 // check if this is just the TabCode display version:
  	if(urlParams.has("tc_path")) {
 //  		logger.log(urlParams.get("tc_path"));
@@ -519,7 +759,7 @@ readSyncDataURL = function(file) {
  		// Add new CSS to hide non-essential bits:
  		$(document).ready(function () {$('#banner').css('display', 'none');});
  		$(document).ready(function () {$('#editbuttons').css('display', 'none');});
-//  		$(document).ready(function () {$('#rhythm-sign_controls').css('display', 'none');});
+ 		$(document).ready(function () {$('#rhythm-sign_controls').css('display', 'none');});
   		$(document).ready(function () {$('#choose_tcfile').css('display', 'none');});
   		$(document).ready(function () {$('#tcchooser').css('display', 'none');});
   		$(document).ready(function () {$('#midichooser').css('display', 'none');});
@@ -531,20 +771,8 @@ readSyncDataURL = function(file) {
 		
  		// Load contents of tc.path into code text-box
  		displayTabCodeFromURL();
-
-		// Highlight beats for search-window
-		if(urlParams.has("window")) {
-			document.getElementById(getBeatBox(urlParams.get("window"))).click();
-		}		
-
-		// Hide TabCode
-// 		document.getElementById("tchide").click();
-		tcHide();
  	}
- 
-	
  </script>
-
 
 </body>
 </html>

@@ -33,12 +33,16 @@ function Ruleset(code, prevSet) {
   this.previousRuleset = prevSet;
   this.comment = code[0];
   this.rules = this.comment.toLowerCase();
+  this.ulc_rules = this.comment;
   this.rules = this.rules.substring(this.rules.indexOf("<rules>")+7,
       this.rules.indexOf("</rules>"));
+  if(this.rules.includes("<title>")) {
+      this.rules = this.ulc_rules}
   this.starts = code[1];
   this.finishes = code[2];
   this.notation = false;
   this.tuning = false;
+  this.pieceTitle = false;
   this.getRule = function(rulename){
     //FIXME: case sensitivity
     var rex = new RegExp("<" + rulename + ">[^<]*<\/"+rulename+">");
@@ -77,6 +81,10 @@ function Ruleset(code, prevSet) {
   if(thisRule = this.getRule("crotchet[-_]flag")) {
 	  DoubleDurs = (thisRule && /[Ee]/.test(thisRule));
 	  document.getElementById("q_flag").src= "flag_E.jpg";
+  }
+  
+  if(thisRule = this.getRule("title")) {
+  	this.pieceTitle = thisRule;
   }
   
   this.getTuning = function() {
@@ -195,6 +203,8 @@ function Ruleset(code, prevSet) {
     curTuning = this.tuning;
   };
   this.getTuning();
+  
+
 }
 
 function retune2(tuning, course, list){

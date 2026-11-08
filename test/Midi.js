@@ -1304,7 +1304,9 @@
                 Object.defineProperty(e, "__esModule", {
                     value: !0
                 });
-                var i, a, o = (i = /^([a-g] {    1    } ( ? : b | # | x | bb) ? )(- ? [0 - 9] + ) / i,
+//                 var i, a, o = (i = /^([a-g] {    1    } ( ? : b | # | x | bb) ? )(- ? [0 - 9] + ) / i,
+                // Correction suggested by CHatGPT 17Sep2026:
+                var i, a, o = (i = /^([a-g]{1}(?:b|#|x|bb)?)(-?[0-9]+)/i,
                     a = {
                         cbb: -2,
                         cb: -1,

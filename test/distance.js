@@ -46,7 +46,7 @@ function dist(w1, w2){
     case "Chord":
       return chordDiff(w1, w2);
     default:
-      alert(w1.tType);
+//       alert(w1.tType);
       return 0;
   }
 }
