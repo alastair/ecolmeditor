@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ECOLM audio repair</title>
+<style>
+body{font:17px/1.5 system-ui;max-width:960px;margin:40px auto;padding:0 24px;background:#f7f4ee;color:#252c29}
+h1{font-size:36px;line-height:1.2}button,select{font:inherit;padding:8px 14px;margin:4px;border:1px solid #969c94;border-radius:6px;background:white}
+button{cursor:pointer}a{color:#20654c}section{background:white;padding:22px;margin:20px 0;border:1px solid #ddd8cc;border-radius:10px}
+svg{display:block;width:100%;height:160px;background:#f3f5f2}table{border-collapse:collapse;width:100%;font-size:15px}td,th{text-align:left;border-bottom:1px solid #ddd;padding:8px}#status{min-height:26px}
+</style>
+<h1>ECOLM audio repair</h1>
+<p>Tim Crawford’s existing lute recordings, with their note starts aligned. Compare the same note before and after repair; both versions use Safari-compatible WAV audio.</p>
+<p><a href="../test/new_index.html?tc_path=../web/branle_besard.tc">Open the repaired editor with Tim’s Branle score →</a></p>
+<section>
+<label>Instrument <select id="bank"><option value="G_lute">G lute</option><option value="E_lute">E lute</option><option value="Bar_lute">D minor lute (A=415Hz)</option></select></label>
+<label>Note <select id="note"></select></label>
+<p><button id="before">Play original timing</button><button id="after">Play aligned timing</button><button id="scale">Compare an ascending scale</button><button id="stop">Stop</button></p>
+<p id="status" role="status">Loading analysis…</p>
+<svg id="wave" viewBox="0 0 900 160" aria-label="Original sample amplitude over its first 500 milliseconds"></svg>
+<p id="detail"></p><small>The red line marks the estimated attack; the green line marks the trim point. Five milliseconds before the detected attack are retained. Automatic estimates need listening review.</small>
+</section>
+<section><h2>Measured note starts</h2><table><thead><tr><th>Instrument</th><th>Sounding notes</th><th>Original range</th><th>Median</th><th>Aligned range</th></tr></thead><tbody id="summary"></tbody></table><p>Silent placeholders remain silent. Pitch, level and the rest of each sample are unchanged. No new recordings or artificial replacement notes.</p></section>
+<script src="demo.js"></script>
+</html>

@@ -3,26 +3,34 @@ var tempo = false;
 var legato_factor = 1.1;
 var playing = false;
 var thesoundfont = false;
-var leadTime = 1;
+var leadTime = 0.1;
 
 //  PLAYBACK FUNCTIONS
 
 function jsPlay(start, end, starti){
-  if(ctx && ctx.close) {
-    ctx.close();
-    ctx = false;
-  }
+  jsStop();
+  playing = false;
   ctx = new AudioContext();
+  var playContext = ctx;
+  // Resume synchronously in the Play/selection/tempo gesture, before loading.
+  var resumed = ctx.resume();
+  playbackMessage('Loading audio…');
   soundfont = new Soundfont(ctx);
   // instrument = soundfont.instrument('acoustic_guitar_nylon');
   thesoundfont = getSoundfont(TabCodeDocument);
   instrument = soundfont.instrument(thesoundfont+'/acoustic_grand_piano');
   curTuning = curParams.contextTuning;
   var words = TabCodeDocument.TabWords;
-  var now = leadTime;
   var started = false;
   starti = starti || 0;
-  instrument.onready(function(){
+  var playInstrument = instrument;
+  return Promise.all([resumed, instrument.onready(function(){})]).then(function(){
+    // Stop or a newer Play may have cancelled this pending load.
+    if(ctx !== playContext) return;
+    if(ctx.state !== 'running') throw new Error('Audio is suspended. Click Play again.');
+    var now = ctx.currentTime + Math.max(0.05, leadTime);
+    var playbackStart = now;
+    playbackMessage('Playing');
     playing=new Playing();
     playing.doc = TabCodeDocument;
     playing.words = words;
@@ -35,18 +43,27 @@ function jsPlay(start, end, starti){
       started = true;
       if(words[i].tType==="Chord"){
         if(!playing.wordi && playing.wordi!==0) playing.wordi = i;
-        now = bufferChord(words[i], now, instrument, i, words);
+        now = bufferChord(words[i], now, playInstrument, i, words);
       }
       if(end && end===words[i]) break;
     }
-    TabCodeDocument.duration = (now-leadTime)*64;
+    TabCodeDocument.duration = (now-playbackStart)*64;
     $(".playback.control").toggleClass("start", false);
     $(".playback.control").toggleClass("stop", true);  
-    playingTimeout = setTimeout(switchControls, (now+leadTime)*1000);
+    playingTimeout = setTimeout(switchControls, (now-ctx.currentTime+0.05)*1000);
+  }).catch(function(error){
+    if(ctx !== playContext) return;
+    jsStop();
+    playing = false;
+    playbackMessage('Playback failed: ' + error.message);
   });
 }
+function playbackMessage(message){
+  var status = document.getElementById('audioStatus');
+  if(status) status.textContent = message;
+}
 function jsStop(){
-  if(ctx) ctx.close();
+  if(ctx && ctx.state !== 'closed') ctx.close().catch(function(){});
   $(".playback.control").toggleClass("start", true);
   $(".playback.control").toggleClass("stop", false);
   if(playingTimeout){
@@ -58,6 +75,7 @@ function jsStop(){
     playing.timeout = false;
   }
   ctx = false;
+  playbackMessage('Stopped');
 }
 function switchControls(){
   $(".playback.control").toggleClass("start", true);
@@ -101,6 +119,7 @@ function isPlaying(){
   return playingTimeout;
 }
 function playOrResume(){
+  if(ctx) return; // Includes a pending bank load.
   if(playing && playing.wordi<playing.doc.TabWords.length){
     playing.resume();
   } else {
@@ -111,12 +130,13 @@ function stopOrPause(){
 // TC 30 Sep 2026: save playing.wordi as ?(global) last_played_wordi
 // so we can play from here 
 // (which might be computed from a click in the tab or tabcode)
-		start_wordi = playing.wordi;
+		start_wordi = playing ? playing.wordi : 0;
 		
   if(playing && playing.timeout){
     playing.pause();
   } else if(playing && playing.wordi){
-    TabCodeDocument.TabWords[playing.wordi].DOMObj.classList.remove('playing');
+    var lastWord = playing.doc.TabWords[playing.wordi];
+    if(lastWord && lastWord.DOMObj) lastWord.DOMObj.classList.remove('playing');
 
     playing.wordi = 0;
   } else {
@@ -142,6 +162,7 @@ function follow(){
   }
   if(words.length>playing.wordi){
     words[playing.wordi].DOMObj.classList.add('playing');
+    centrePlayingSystem(words[playing.wordi]);
     var nextInterval = 1000*(words[playing.wordi].dur/64) / (3/2*playing.tempoFactor);
     var now = new Date().getTime();
     var prevError = playing.interval - (now - playing.now);
@@ -152,6 +173,29 @@ function follow(){
   }
 }
 
+// The renderer inserts a Staves group before the chords of each drawn system.
+// Use that group rather than a chord's varying rhythm/bass-note bounds.
+function centrePlayingSystem(chord, force){
+  var option = document.getElementById('followPlayback');
+  var editor = document.getElementById('editor_container');
+  if(!option || !option.checked || !editor || !playing || !chord || !chord.DOMObj) return;
+  var staff = chord.DOMObj.previousElementSibling;
+  while(staff && !staff.classList.contains('Staves')) staff = staff.previousElementSibling;
+  if(!staff || (!force && playing.followedStaff === staff)) return;
+  var bounds = editor.getBoundingClientRect();
+  var top = Math.max(0, bounds.top + editor.clientTop);
+  var bottom = Math.min(window.innerHeight, bounds.top + editor.clientTop + editor.clientHeight);
+  if(bottom <= top) return;
+  var system = staff.getBoundingClientRect();
+  var target = editor.scrollTop + (system.top + system.bottom - top - bottom) / 2;
+  editor.scrollTop = Math.max(0, Math.min(editor.scrollHeight - editor.clientHeight, target));
+  playing.followedStaff = staff;
+}
+
+function toggleFollowPlayback(){
+  if(playing && playing.timeout) centrePlayingSystem(playing.words[playing.wordi], true);
+}
+
 function Playing(){
   this.ctx = ctx;
   this.doc = false;
@@ -160,6 +204,7 @@ function Playing(){
   this.now = 0;
   this.interval = 0;
   this.tempoFactor = 1;
+  this.followedStaff = null;
   this.pause = pausePlaying;
   this.resume = resumePlaying;
 }
@@ -193,8 +238,7 @@ function updateTempo(){
   //if(src) src.playbackRate.value = Number(document.getElementById('tempoSlider').value) / 90;
   if(playing && playing.timeout && isPlaying()){
     playing.pause();
-    leadTime = 0;
-    window.setTimeout(playing.resume, 500);
+    playing.resume();
   } 
 }
 function showTempoValue(value) {
@@ -258,9 +302,11 @@ function bufferChord(chord, t, instrument, wordi, words){
   var dur = baseDur / (3 / 2 * tempoFactor);
   if(playing && !playing.timeout) {
     playing.tempoFactor = tempoFactor;
-    playing.timeout = window.setTimeout(follow, 1000*(dur+0)); // Why not leadTime?
-    playing.interval = 1000*(dur+0);
+    var firstInterval = 1000 * (dur + Math.max(0, t - ctx.currentTime));
+    playing.timeout = window.setTimeout(follow, firstInterval);
+    playing.interval = firstInterval;
     chord.DOMObj.classList.add('playing');
+    centrePlayingSystem(chord);
   }
   for(var i=0; i<chord.mainCourses.length; i++){
     if(chord.mainCourses[i]){

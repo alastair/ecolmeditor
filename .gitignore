@@ -1,0 +1,6 @@
+__pycache__/
+.DS_Store
+web/audio/
+web/analysis.json
+build/
+sft/*/*-wav.js

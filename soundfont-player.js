@@ -143,7 +143,7 @@ Soundfont.noteToMidi = function(note) {
  */
 Soundfont.nameToUrl = function(name) {
   // return 'https://cdn.rawgit.com/gleitz/midi-js-Soundfonts/master/FluidR3_GM/' + name + '-ogg.js';
-  return '../sft/' + name + '-ogg.js';
+  return '../sft/' + name + '-wav.js';
 }
 
 /*
@@ -180,9 +180,10 @@ Soundfont.loadData = function(url) {
  */
 Soundfont.dataToJson = function(data) {
   var begin = data.indexOf("MIDI.Soundfont.");
-  begin = data.indexOf('=', begin) + 2;
-  var end = data.lastIndexOf(',');
-  return JSON.parse(data.slice(begin, end) + "}");
+  if (begin < 0) throw new Error('Invalid soundfont wrapper');
+  begin = data.indexOf('{', data.indexOf('=', begin));
+  var end = data.lastIndexOf('}');
+  return JSON.parse(data.slice(begin, end + 1).replace(/,\s*}$/, '}'));
 }
 
 
@@ -249,7 +250,7 @@ function decodeNote(context, data) {
     context.decodeAudioData(decodedData, function(buffer) {
       done(buffer);
     }, function(e) {
-      reject("DecodeAudioData error", e);
+      reject(new Error("Could not decode soundfont audio: " + (e && e.message || e)));
     });
   });
 }
